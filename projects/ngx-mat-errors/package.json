@@ -1,0 +1,31 @@
+{
+  "name": "ngx-mat-errors",
+  "version": "0.0.1",
+  "author": {
+    "name": "Totati",
+    "url": "https://twitter.com/48Aca"
+  },
+  "peerDependencies": {
+    "@angular/common": "^9.0.0",
+    "@angular/core": "^9.0.0",
+    "@angular/material": "^9.0.0",
+    "tslib": "^1.10.0"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/Totati/ngx-mat-errors"
+  },
+  "keywords": [
+    "angular",
+    "material",
+    "error",
+    "error-messages",
+    "validation",
+    "validator",
+    "custom",
+    "MatFromField",
+    "mat-form-field"
+  ],
+  "description": "NgxMatErrors provides an easy, yet flexible solution for displaying error messages in a MatFormField."
+}

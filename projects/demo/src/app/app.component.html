@@ -1,0 +1,38 @@
+<mat-toolbar color="primary">NgxMatErrors</mat-toolbar>
+<div class="container">
+  <mat-card>
+    <mat-card-title>
+      Input template
+    </mat-card-title>
+    <mat-card-content>
+      <p>
+        A MatFormField with automatic error message, and a customised pattern message.
+      </p>
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>Input</mat-label>
+          <input type="text" matInput required [formControl]="control1" autocomplete="off">
+          <mat-error ngx-mat-errors>
+            <span *ngxMatErrorDef="let error; for: 'pattern'">
+              Only digits are allowed, up to 12 digits.
+            </span>
+          </mat-error>
+          <mat-hint>Only digits are allowed, up to 12 digits.</mat-hint>
+        </mat-form-field>
+      </div>
+      <p>Custom min and max error messages</p>
+      <div>
+        <mat-form-field appearance="outline">
+          <mat-label>Input</mat-label>
+          <input type="number" matInput [formControl]="control2" autocomplete="off">
+          <mat-error ngx-mat-errors>
+            <ng-container *ngxMatErrorDef="let error; for: 'max'">
+              Maximum value is {{error.max}}.
+            </ng-container>
+          </mat-error>
+          <mat-hint>Min value is 10, max is 20</mat-hint>
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
