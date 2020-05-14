@@ -25,19 +25,18 @@ export interface PatternValidator {
 }
 
 export const DEFAULT_ERROR_MESSAGES: ErrorMessages = {
+  min: (error: MinError) =>
+  `Please enter a value greater than or equal to ${error.min}.`,
   max: (error: MaxError) =>
     `Please enter a value less than or equal to ${error.max}.`,
-  min: (error: MinError) =>
-    `Please enter a value greater than or equal to ${error.min}.`,
   required: `This field is required.`,
-  requiredTrue: `This field is required.`,
   email: `Please enter a valid email address.`,
-  maxLength: (error: LengthError) =>
-    `Please enter no more than ${error.requiredLength} characters.`,
-  minLength: (error: LengthError) =>
+  minlength: (error: LengthError) =>
     `Please enter at least ${error.requiredLength} characters.`,
-  matDatepickerMax: (error: MaxError) =>
-    `Please enter a date less than or equal to ${error.max}.`,
+  maxlength: (error: LengthError) =>
+    `Please enter no more than ${error.requiredLength} characters.`,
   matDatepickerMin: (error: MinError) =>
     `Please enter a date greater than or equal to ${error.min}.`,
+  matDatepickerMax: (error: MaxError) =>
+    `Please enter a date less than or equal to ${error.max}.`,
 };
