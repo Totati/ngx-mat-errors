@@ -84,14 +84,14 @@ export class NgxMatErrors<T> implements OnInit {
 
   ngOnInit() {
     const control = this.matFormField._control.ngControl;
-    const statusChanges = control?.statusChanges;
-    if (control && statusChanges) {
-      this.initError(control, statusChanges);
+    const stateChanges = this.matFormField._control.stateChanges;
+    if (control && stateChanges) {
+      this.initError(control, stateChanges);
     }
   }
 
-  private initError(control: NgControl, statusChanges: Observable<any>) {
-    this.error$ = statusChanges.pipe(
+  private initError(control: NgControl, stateChanges: Observable<any>) {
+    this.error$ = stateChanges.pipe(
       startWith(null as any),
       map(() => {
         if (!control.errors) {
