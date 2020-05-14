@@ -40,13 +40,13 @@ export class AppModule {}
 </mat-form-field>
 ```
 
-## Customise
+## Customize
 
-There are 2 way to customise your error messages.
+There are 2 way to customize your error messages.
 
 ### Injection token
 
-There is the `NGX_MAT_ERROR_DEFAULT_OPTIONS` injection token, you can provide it in your `app.module.ts` with useClass, or useFactory and customise your error messages globally.
+There is the `NGX_MAT_ERROR_DEFAULT_OPTIONS` injection token, you can provide it in your `app.module.ts` with useClass, or useFactory and customize your error messages globally.
 
 This example changes only the `min` error message. 
 ```typescript
@@ -70,7 +70,7 @@ export class AppModule {}
 ```
 
 ### *ngxMatErrorDef
-You can customise your error messages even more with `*ngxMatErrorDef` directive.
+You can customize your error messages even more with `*ngxMatErrorDef` directive.
 
 ```html
 <mat-form-field >
