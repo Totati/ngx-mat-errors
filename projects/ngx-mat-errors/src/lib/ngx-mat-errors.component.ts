@@ -17,16 +17,17 @@ import {
   InjectionToken,
 } from '@angular/core';
 import { NgControl, ValidationErrors } from '@angular/forms';
-import { MatFormField } from '@angular/material/form-field';
+import {
+  MatFormField,
+  MatFormFieldControl,
+} from '@angular/material/form-field';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
-import {
-  DEFAULT_ERROR_MESSAGES,
-  ErrorMessages,
-} from './error-meassages';
+import { DEFAULT_ERROR_MESSAGES, ErrorMessages } from './error-meassages';
 
-
-export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<ErrorMessages>('NGX_MAT_ERROR_DEFAULT_OPTIONS');
+export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<ErrorMessages>(
+  'NGX_MAT_ERROR_DEFAULT_OPTIONS'
+);
 
 export interface ErrorOutletContext<T> {
   $implicit?: T;
@@ -68,7 +69,7 @@ export class NgxMatErrors<T> implements OnInit {
     @Optional()
     @Inject(NGX_MAT_ERROR_DEFAULT_OPTIONS)
     messages: ErrorMessages | null,
-    private readonly matFormField: MatFormField
+    @Optional() private readonly matFormField: MatFormField
   ) {
     this.messages = messages || DEFAULT_ERROR_MESSAGES;
     this.messageKeys = new Set(Object.keys(this.messages));
@@ -82,11 +83,20 @@ export class NgxMatErrors<T> implements OnInit {
 
   error$: Observable<string>;
 
+  // tslint:disable-next-line: no-input-rename
+  @Input('ngx-mat-errors')
+  control?: MatFormFieldControl<any>;
+
   ngOnInit() {
-    const control = this.matFormField._control.ngControl;
-    const stateChanges = this.matFormField._control.stateChanges;
-    if (control && stateChanges) {
-      this.initError(control, stateChanges);
+    if (!this.control && this.matFormField) {
+      this.control = this.matFormField._control;
+    }
+    if (this.control) {
+      const control = this.control.ngControl;
+      const stateChanges = this.control.stateChanges;
+      if (control && stateChanges) {
+        this.initError(control, stateChanges);
+      }
     }
   }
 

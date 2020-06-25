@@ -11,7 +11,7 @@
       <div>
         <mat-form-field appearance="outline">
           <mat-label>Input</mat-label>
-          <input type="text" matInput required [formControl]="control1" autocomplete="off">
+          <input type="text" matInput required #input="matInput"  [formControl]="control1" autocomplete="off">
           <mat-error ngx-mat-errors>
             <span *ngxMatErrorDef="let error; for: 'pattern'">
               Only digits are allowed, up to 12 digits.
@@ -33,6 +33,12 @@
           <mat-hint>Min value is 10, max is 20</mat-hint>
         </mat-form-field>
       </div>
+      <p>Error message outside a <code>mat-form-field</code>.</p>
+      <mat-error [ngx-mat-errors]="input">
+        <span *ngxMatErrorDef="let error; for: 'pattern'">
+          Only digits are allowed, up to 12 digits.
+        </span>
+      </mat-error>
     </mat-card-content>
   </mat-card>
 </div>

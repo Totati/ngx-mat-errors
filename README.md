@@ -40,6 +40,17 @@ export class AppModule {}
 </mat-form-field>
 ```
 
+### Outside a `MatFormField` or override the control
+`ngx-mat-errors` can be used as an `@Input()` to override the `MatFormFieldControl`.
+```html
+  <mat-form-field appearance="outline">
+    <mat-label>Input</mat-label>
+    <input type="text" matInput #input="matInput" [formControl]="control1" autocomplete="off" required>
+  </mat-form-field>
+  <mat-error [ngx-mat-errors]="input"></mat-error>
+```
+
+
 ## Customize
 
 There are 2 way to customize your error messages.
