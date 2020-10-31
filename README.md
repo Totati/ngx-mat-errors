@@ -43,7 +43,7 @@ export class AppModule {}
 ### Outside a `MatFormField` or override the control
 `ngx-mat-errors` can be used as an `@Input()` to override the `MatFormFieldControl`.
 ```html
-  <mat-form-field appearance="outline">
+  <mat-form-field>
     <mat-label>Input</mat-label>
     <input type="text" matInput #input="matInput" [formControl]="control1" autocomplete="off" required>
   </mat-form-field>
@@ -99,8 +99,8 @@ You can customize your error messages even more with `*ngxMatErrorDef` directive
 
 ## Compatibility
 
-* `@angular/core`: `^9.0.0`,
-* `@angular/material`: `^9.0.0`,
+* `@angular/core`: `^9.0.0 || ^10.0.0`,
+* `@angular/material`: `^9.0.0 || ^10.0.0`,
 
 ## Development
 
@@ -110,4 +110,4 @@ The build artifacts will be stored in the `dist/ngx-mat-errors` folder.
 
 ### Development server
 
-Run `npm start` for a dev server. Navigate to `http://localhost:4201/`. The app will automatically reload if you change any of the source files.
+Run `npm start` for a dev server. Navigate to `http://localhost:4202/`. The app will automatically reload if you change any of the source files.

@@ -3,14 +3,14 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --port 4201",
+    "start": "ng serve --port 4202",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "develop": "ng build ngx-mat-errors --watch",
-    "build-lib": "npm run copy-readme && ng build ngx-mat-errors --prod",
-    "copy-readme": "copyfiles ./README.md projects/ngx-mat-errors"
+    "build-lib": "ng build ngx-mat-errors --prod && npm run copy-readme",
+    "copy-readme": "copyfiles ./README.md dist/ngx-mat-errors"
   },
   "private": true,
   "dependencies": {
