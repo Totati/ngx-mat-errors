@@ -1,4 +1,4 @@
-# NgxMatError
+# NgxMatErrors
 
 [![npm version](https://img.shields.io/npm/v/ngx-mat-errors.svg?style=flat-square)](https://www.npmjs.com/package/ngx-mat-errors)
 [![npm downloads total](https://img.shields.io/npm/dt/ngx-mat-errors.svg?style=flat-square)](https://www.npmjs.com/package/ngx-mat-errors)
@@ -6,7 +6,7 @@
 
 ## What does it do?
 
-NgxMatError provides an easy, yet flexible solution for displaying error messages in a MatFormField.
+NgxMatErrors provides an easy, yet flexible solution for displaying error messages in a MatFormField.
 
 ## Try it
 See it in action at [https://stackblitz.com/edit/ngx-mat-errors](https://stackblitz.com/edit/ngx-mat-errors)
@@ -18,7 +18,7 @@ Install `ngx-mat-errors` in your project:
 npm install ngx-mat-errors
 ```
 
-Import the `NgxNavbarModule` in your `app.module.ts`:
+Import the `NgxMatErrorsModule` in your `app.module.ts`:
 ```typescript
 import {
   NgxMatErrorsModule
@@ -53,7 +53,7 @@ export class AppModule {}
 
 ## Customize
 
-There are 2 way to customize your error messages.
+There are 2 ways to customize your error messages.
 
 ### Injection token
 
