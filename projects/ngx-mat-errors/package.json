@@ -6,10 +6,9 @@
     "url": "https://twitter.com/48Aca"
   },
   "peerDependencies": {
-    "@angular/common": "^9.0.0",
-    "@angular/core": "^9.0.0",
-    "@angular/material": "^9.0.0",
-    "tslib": "^1.10.0"
+    "@angular/common": "^9.0.0 || ^10.0.0",
+    "@angular/core": "^9.0.0 || ^10.0.0",
+    "@angular/material": "^9.0.0 || ^10.0.0"
   },
   "license": "MIT",
   "repository": {
@@ -21,11 +20,15 @@
     "material",
     "error",
     "error-messages",
+    "messages",
     "validation",
     "validator",
     "custom",
     "MatFromField",
     "mat-form-field"
   ],
+  "dependencies": {
+    "tslib": "^2.0.0"
+  },
   "description": "NgxMatErrors provides an easy, yet flexible solution for displaying error messages in a MatFormField."
 }
