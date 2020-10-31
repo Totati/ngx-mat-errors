@@ -115,7 +115,7 @@ export class NgxMatErrors<T> implements OnInit {
         return errorKeys.find((key) => this.messageKeys.has(key));
       }),
       distinctUntilChanged(),
-      map((errorOrErrorDef) => {
+      map((errorOrErrorDef: undefined | NgxMatErrorDef | string) => {
         this.errorOutlet.viewContainer.clear();
         if (!errorOrErrorDef) {
           return '';
