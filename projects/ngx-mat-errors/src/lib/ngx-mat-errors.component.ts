@@ -24,6 +24,7 @@ import {
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
 import { DEFAULT_ERROR_MESSAGES, ErrorMessages } from './error-meassages';
+import { getNgxMatErrorDefMissingForError } from './errors';
 
 export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<ErrorMessages>(
   'NGX_MAT_ERROR_DEFAULT_OPTIONS'
@@ -36,9 +37,15 @@ export interface ErrorOutletContext<T> {
 @Directive({
   selector: '[ngxMatErrorDef]',
 })
-export class NgxMatErrorDef {
-  @Input() ngxMatErrorDefFor: string;
+export class NgxMatErrorDef implements OnInit{
+  @Input() ngxMatErrorDefFor!: string;
   constructor(public template: TemplateRef<any>) {}
+
+  ngOnInit(){
+    if(!this.ngxMatErrorDefFor){
+      throw getNgxMatErrorDefMissingForError();
+    }
+  }
 }
 
 @Directive({ selector: '[ngxMatErrorOutlet]' })
@@ -76,16 +83,16 @@ export class NgxMatErrors<T> implements OnInit {
   }
 
   @ViewChild(NgxMatErrorOutlet, { static: true })
-  errorOutlet: NgxMatErrorOutlet;
+  readonly errorOutlet!: NgxMatErrorOutlet;
 
   @ContentChildren(NgxMatErrorDef, { descendants: true })
-  customErrorMessages: QueryList<NgxMatErrorDef>;
+  readonly customErrorMessages!: QueryList<NgxMatErrorDef>;
 
-  error$: Observable<string>;
+  readonly error$!: Observable<string>;
 
   // tslint:disable-next-line: no-input-rename
   @Input('ngx-mat-errors')
-  control?: MatFormFieldControl<any>;
+  control?: MatFormFieldControl<any> | "" | null;
 
   ngOnInit() {
     if (!this.control && this.matFormField) {
@@ -101,7 +108,7 @@ export class NgxMatErrors<T> implements OnInit {
   }
 
   private initError(control: NgControl, stateChanges: Observable<any>) {
-    this.error$ = stateChanges.pipe(
+    (this as any).error$ = stateChanges.pipe(
       startWith(null as any),
       map(() => {
         if (!control.errors) {

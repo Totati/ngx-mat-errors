@@ -5,11 +5,12 @@
     "ng": "ng",
     "start": "ng serve --port 4202",
     "build": "ng build",
+    "build:prod": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "develop": "ng build ngx-mat-errors --watch",
-    "build-lib": "ng build ngx-mat-errors --prod && npm run copy-readme",
+    "build:lib": "ng build ngx-mat-errors --prod && npm run copy-readme",
     "copy-readme": "copyfiles ./README.md dist/ngx-mat-errors"
   },
   "private": true,
