@@ -37,12 +37,12 @@ export interface ErrorOutletContext<T> {
 @Directive({
   selector: '[ngxMatErrorDef]',
 })
-export class NgxMatErrorDef implements OnInit{
+export class NgxMatErrorDef implements OnInit {
   @Input() ngxMatErrorDefFor!: string;
   constructor(public template: TemplateRef<any>) {}
 
-  ngOnInit(){
-    if(!this.ngxMatErrorDefFor){
+  ngOnInit() {
+    if (!this.ngxMatErrorDefFor) {
       throw getNgxMatErrorDefMissingForError();
     }
   }
@@ -92,7 +92,7 @@ export class NgxMatErrors<T> implements OnInit {
 
   // tslint:disable-next-line: no-input-rename
   @Input('ngx-mat-errors')
-  control?: MatFormFieldControl<any> | "" | null;
+  control?: MatFormFieldControl<any> | '' | null;
 
   ngOnInit() {
     if (!this.control && this.matFormField) {
@@ -122,7 +122,7 @@ export class NgxMatErrors<T> implements OnInit {
         return errorKeys.find((key) => this.messageKeys.has(key));
       }),
       distinctUntilChanged(),
-      map((errorOrErrorDef: undefined | NgxMatErrorDef | string) => {
+      map((errorOrErrorDef) => {
         this.errorOutlet.viewContainer.clear();
         if (!errorOrErrorDef) {
           return '';
