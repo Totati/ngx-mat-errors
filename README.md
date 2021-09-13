@@ -99,8 +99,8 @@ You can customize your error messages even more with `*ngxMatErrorDef` directive
 
 ## Compatibility
 
-* `@angular/core`: `^9.0.0 || ^10.0.0`,
-* `@angular/material`: `^9.0.0 || ^10.0.0`,
+* `@angular/core`: `^9.0.0 || ^10.0.0 || ^11.0.0`,
+* `@angular/material`: `^9.0.0 || ^10.0.0 || ^11.0.0`,
 
 ## Development
 
