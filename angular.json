@@ -30,14 +30,11 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "projects/ngx-mat-errors/tsconfig.lib.json",
-              "projects/ngx-mat-errors/tsconfig.spec.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
+            "lintFilePatterns": [
+              "projects/ngx-mat-errors/**/*.ts",
+              "projects/ngx-mat-errors/**/*.html"
             ]
           }
         }
@@ -144,19 +141,6 @@
             "scripts": []
           }
         },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": [
-              "projects/demo/tsconfig.app.json",
-              "projects/demo/tsconfig.spec.json",
-              "projects/demo/e2e/tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
-            ]
-          }
-        },
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
@@ -168,12 +152,22 @@
               "devServerTarget": "demo:serve:production"
             }
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/demo/**/*.ts",
+              "projects/demo/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "cli": {
-    "analytics": "07e3ef88-7467-415e-9635-342c7918adc7"
+    "analytics": "07e3ef88-7467-415e-9635-342c7918adc7",
+    "defaultCollection": "@angular-eslint/schematics"
   },
   "defaultProject": "demo"
 }
