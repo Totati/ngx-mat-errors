@@ -1,0 +1,53 @@
+{
+  "extends": "../../.eslintrc.json",
+  "ignorePatterns": [
+    "!**/*"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.ts"
+      ],
+      "parserOptions": {
+        "project": [
+          "projects/ngx-mat-errors/tsconfig.lib.json",
+          "projects/ngx-mat-errors/tsconfig.spec.json"
+        ],
+        "createDefaultProgram": true
+      },
+      "rules": {
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "ngxMat",
+            "style": "camelCase"
+          }
+        ],
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": "element",
+            "prefix": "ngx-mat",
+            "style": "kebab-case"
+          }
+        ],
+        "@angular-eslint/directive-class-suffix": [
+          "off"
+        ],
+        "@angular-eslint/component-class-suffix": [
+          "off"
+        ],
+        "@angular-eslint/no-host-metadata-property": [
+          "off"
+        ]
+      }
+    },
+    {
+      "files": [
+        "*.html"
+      ],
+      "rules": {}
+    }
+  ]
+}

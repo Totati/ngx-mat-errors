@@ -28,6 +28,15 @@
             "tsConfig": "projects/ngx-mat-errors/tsconfig.spec.json",
             "karmaConfig": "projects/ngx-mat-errors/karma.conf.js"
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/ngx-mat-errors/**/*.ts",
+              "projects/ngx-mat-errors/**/*.html"
+            ]
+          }
         }
       }
     },
@@ -143,12 +152,22 @@
               "devServerTarget": "demo:serve:production"
             }
           }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "projects/demo/**/*.ts",
+              "projects/demo/**/*.html"
+            ]
+          }
         }
       }
     }
   },
   "cli": {
-    "analytics": "07e3ef88-7467-415e-9635-342c7918adc7"
+    "analytics": "07e3ef88-7467-415e-9635-342c7918adc7",
+    "defaultCollection": "@angular-eslint/schematics"
   },
   "defaultProject": "demo"
 }

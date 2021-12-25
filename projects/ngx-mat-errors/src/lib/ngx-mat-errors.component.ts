@@ -90,7 +90,7 @@ export class NgxMatErrors<T> implements OnInit {
 
   readonly error$!: Observable<string>;
 
-  // tslint:disable-next-line: no-input-rename
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('ngx-mat-errors')
   control?: MatFormFieldControl<any> | '' | null;
 
