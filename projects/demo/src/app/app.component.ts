@@ -9,7 +9,7 @@ import { FormControl, Validators } from '@angular/forms';
 export class AppComponent {
   readonly control1 = new FormControl('', [
     Validators.required,
-    Validators.pattern('[0-9]{0,12}'),
+    Validators.pattern('[0-9]{0,2}'),
   ]);
   readonly control2 = new FormControl('', [
     Validators.min(10),
