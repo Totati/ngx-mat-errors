@@ -14,7 +14,7 @@ import {
   DEFAULT_ERROR_MESSAGES,
   MinError,
 } from 'ngx-mat-errors';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 export const NGX_MAT_ERROR_DEFAULT_CONFIG: Provider = {
   useFactory: () => {
@@ -39,6 +39,7 @@ export const NGX_MAT_ERROR_DEFAULT_CONFIG: Provider = {
     MatToolbarModule,
     MatCardModule,
     ReactiveFormsModule,
+    FormsModule
   ],
   providers: [NGX_MAT_ERROR_DEFAULT_CONFIG],
   bootstrap: [AppComponent],

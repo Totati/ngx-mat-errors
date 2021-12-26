@@ -15,4 +15,7 @@ export class AppComponent {
     Validators.min(10),
     Validators.max(20),
   ]);
+
+  value1: string | null = null;
+  value2: number | null = null;
 }

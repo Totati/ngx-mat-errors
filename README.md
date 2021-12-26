@@ -9,7 +9,7 @@
 NgxMatErrors provides an easy, yet flexible solution for displaying error messages in a MatFormField.
 
 ## Try it
-See it in action at [https://stackblitz.com/edit/ngx-mat-errors](https://stackblitz.com/edit/ngx-mat-errors)
+See it in action on [StackBlitz](https://stackblitz.com/edit/ngx-mat-errors-angular-13?file=src%2Fapp%2Fapp.component.html)
 
 
 ## How to use it?
@@ -32,10 +32,11 @@ import {
 })
 export class AppModule {}
 ```
-
+Add `ngx-mat-errors` to your `mat-error` in your `mat-form-field`.
 ```html
 <mat-form-field>
-  <input type="text" matInput required [formControl]="control1">
+  <mat-label>Label</mat-label>
+  <input type="text" matInput [formControl]="control">
   <mat-error ngx-mat-errors></mat-error>
 </mat-form-field>
 ```
@@ -44,8 +45,8 @@ export class AppModule {}
 `ngx-mat-errors` can be used as an `@Input()` to override the `MatFormFieldControl`.
 ```html
   <mat-form-field>
-    <mat-label>Input</mat-label>
-    <input type="text" matInput #input="matInput" [formControl]="control1" autocomplete="off" required>
+    <mat-label>Label</mat-label>
+    <input type="text" matInput #input="matInput" [formControl]="control1" autocomplete="off">
   </mat-form-field>
   <mat-error [ngx-mat-errors]="input"></mat-error>
 ```
@@ -57,7 +58,7 @@ There are 2 ways to customize your error messages.
 
 ### Injection token
 
-There is the `NGX_MAT_ERROR_DEFAULT_OPTIONS` injection token, you can provide it in your `app.module.ts` with useClass, or useFactory and customize your error messages globally.
+There is the `NGX_MAT_ERROR_DEFAULT_OPTIONS` injection token, you can provide it in your `app.module.ts` with `useClass`, or `useFactory` and customize your error messages globally.
 
 This example changes only the `min` error message. 
 ```typescript
@@ -84,7 +85,8 @@ export class AppModule {}
 You can customize your error messages even more with `*ngxMatErrorDef` directive.
 
 ```html
-<mat-form-field >
+<mat-form-field>
+  <mat-label>Label</mat-label>
   <input type="text" matInput [formControl]="control1">
   <mat-error ngx-mat-errors>
     <span *ngxMatErrorDef="let error; for: 'pattern'">
@@ -99,8 +101,25 @@ You can customize your error messages even more with `*ngxMatErrorDef` directive
 
 ## Compatibility
 
-* `@angular/core`: `^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0`,
-* `@angular/material`: `^9.0.0 || ^10.0.0 || ^11.0.0 || ^12.0.0`,
+* `@angular/core`: `^13.0.0`,
+* `@angular/material`: `^13.0.0`,
+
+### Reactve forms
+```html
+<mat-form-field>
+  <mat-label>Label</mat-label>
+  <input type="text" matInput [formControl]="control">
+  <mat-error ngx-mat-errors></mat-error>
+</mat-form-field>
+```
+### Template-driven forms 
+```html
+<mat-form-field>
+  <mat-label>Label</mat-label>
+  <input type="text" matInput [(ngModel)]="value">
+  <mat-error ngx-mat-errors></mat-error>
+</mat-form-field>
+```
 
 ## Development
 
