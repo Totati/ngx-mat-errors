@@ -11,4 +11,5 @@
     "src/test.ts",
     "**/*.spec.ts"
   ],
+  "include": ["dev-mode-types.d.ts"]
 }

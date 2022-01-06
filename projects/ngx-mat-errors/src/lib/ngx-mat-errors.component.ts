@@ -42,7 +42,7 @@ export class NgxMatErrorDef implements OnInit {
   constructor(public template: TemplateRef<any>) {}
 
   ngOnInit() {
-    if (!this.ngxMatErrorDefFor) {
+    if (!this.ngxMatErrorDefFor && (typeof ngDevMode === 'undefined' || ngDevMode)) {
       throw getNgxMatErrorDefMissingForError();
     }
   }
