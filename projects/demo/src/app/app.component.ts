@@ -7,11 +7,11 @@ import { FormControl, Validators } from '@angular/forms';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  readonly control1 = new FormControl('', [
+  readonly control1 = new FormControl<string>('', [
     Validators.required,
     Validators.pattern('[0-9]{0,2}'),
   ]);
-  readonly control2 = new FormControl('', [
+  readonly control2 = new FormControl<number | null>(null, [
     Validators.min(10),
     Validators.max(20),
   ]);
