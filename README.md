@@ -9,8 +9,7 @@
 NgxMatErrors provides an easy, yet flexible solution for displaying error messages in a MatFormField.
 
 ## Try it
-See it in action on [StackBlitz](https://stackblitz.com/edit/ngx-mat-errors-angular-13?file=src%2Fapp%2Fapp.component.html)
-
+See it in action on [StackBlitz](https://stackblitz.com/edit/ngx-mat-errors-angular-14?file=src%2Fapp%2Fapp.component.html)
 
 ## How to use it?
 Install `ngx-mat-errors` in your project:
@@ -101,8 +100,8 @@ You can customize your error messages even more with `*ngxMatErrorDef` directive
 
 ## Compatibility
 
-* `@angular/core`: `^13.0.0`,
-* `@angular/material`: `^13.0.0`,
+* `@angular/core`: `^14.0.0`,
+* `@angular/material`: `^14.0.0`,
 
 ### Reactve forms
 ```html
