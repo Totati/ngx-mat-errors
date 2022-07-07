@@ -16,7 +16,7 @@ import {
   ViewEncapsulation,
   InjectionToken,
 } from '@angular/core';
-import { NgControl, ValidationErrors } from '@angular/forms';
+import { AbstractControlDirective, NgControl, ValidationErrors } from '@angular/forms';
 import {
   MatFormField,
   MatFormFieldControl,
@@ -107,7 +107,7 @@ export class NgxMatErrors<T> implements OnInit {
     }
   }
 
-  private initError(control: NgControl, stateChanges: Observable<any>) {
+  private initError(control: NgControl | AbstractControlDirective, stateChanges: Observable<any>) {
     (this as any).error$ = stateChanges.pipe(
       startWith(null as any),
       map(() => {
