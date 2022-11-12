@@ -16,11 +16,11 @@ export function errorMessagesHuFactory(locale: string, format = 'shortDate'): Er
     server: (error: string) => error,
     matDatepickerMin: (error: MinError) => {
       const formatted = formatDate(error.min, format, locale);
-      return `Nem lehet korábbi dátum, mint ${formatted ?? error.min}`;
+      return `Nem lehet korábbi dátum, mint ${formatted ?? error.min}.`;
     },
     matDatepickerMax: (error: MaxError) => {
       const formatted = formatDate(error.max, format, locale);
-      return `Nem lehet készőbbi dátum, mint ${formatted ?? error.max}`;
+      return `Nem lehet későbbi dátum, mint ${formatted ?? error.max}.`;
     },
   };
 }
