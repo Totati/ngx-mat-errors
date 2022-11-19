@@ -18,9 +18,9 @@ import {
 } from '@angular/core';
 import { AbstractControlDirective, NgControl, ValidationErrors } from '@angular/forms';
 import {
-  MatFormField,
-  MatFormFieldControl,
-} from '@angular/material/form-field';
+  MatLegacyFormField as MatFormField,
+  MatLegacyFormFieldControl as MatFormFieldControl,
+} from '@angular/material/legacy-form-field';
 import { Observable } from 'rxjs';
 import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
 import { DEFAULT_ERROR_MESSAGES, ErrorMessages } from './error-meassages';
