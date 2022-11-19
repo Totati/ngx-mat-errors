@@ -4,8 +4,8 @@ import {
   Component,
   ContentChildren,
   Directive,
-  ElementRef,
   Inject,
+  InjectionToken,
   Input,
   OnInit,
   Optional,
@@ -14,14 +14,18 @@ import {
   ViewChild,
   ViewContainerRef,
   ViewEncapsulation,
-  InjectionToken,
 } from '@angular/core';
-import { AbstractControlDirective, NgControl, ValidationErrors } from '@angular/forms';
 import {
-  MatLegacyFormField as MatFormField,
-  MatLegacyFormFieldControl as MatFormFieldControl,
-} from '@angular/material/legacy-form-field';
-import { Observable } from 'rxjs';
+  AbstractControlDirective,
+  NgControl,
+  ValidationErrors,
+} from '@angular/forms';
+import {
+  MatFormField,
+  MatFormFieldControl,
+  MAT_FORM_FIELD,
+} from '@angular/material/form-field';
+import { defer, Observable } from 'rxjs';
 import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
 import { DEFAULT_ERROR_MESSAGES, ErrorMessages } from './error-meassages';
 import { getNgxMatErrorDefMissingForError } from './errors';
@@ -48,27 +52,24 @@ export class NgxMatErrorDef implements OnInit {
   }
 }
 
-@Directive({ selector: '[ngxMatErrorOutlet]' })
+@Directive({
+  selector: '[ngxMatErrorOutlet]',
+})
 export class NgxMatErrorOutlet {
-  constructor(
-    public readonly viewContainer: ViewContainerRef,
-    public readonly elementRef: ElementRef
-  ) {}
+  constructor(public readonly viewContainer: ViewContainerRef) {}
 }
 
 @Component({
   selector: 'ngx-mat-errors, [ngx-mat-errors]',
-  template: `
-    {{ error$ | async }}
-    <ng-container ngxMatErrorOutlet></ng-container>
-  `,
+  template: `{{ error$ | async
+    }}<ng-container ngxMatErrorOutlet></ng-container>`,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     class: 'ngx-mat-errors',
   },
 })
-export class NgxMatErrors<T> implements OnInit {
+export class NgxMatErrors<T> {
   private readonly messages: ErrorMessages;
   private readonly messageKeys: Set<string>;
   constructor(
@@ -76,7 +77,9 @@ export class NgxMatErrors<T> implements OnInit {
     @Optional()
     @Inject(NGX_MAT_ERROR_DEFAULT_OPTIONS)
     messages: ErrorMessages | null,
-    @Optional() private readonly matFormField: MatFormField
+    @Optional()
+    @Inject(MAT_FORM_FIELD)
+    private readonly matFormField: MatFormField
   ) {
     this.messages = messages || DEFAULT_ERROR_MESSAGES;
     this.messageKeys = new Set(Object.keys(this.messages));
@@ -88,27 +91,31 @@ export class NgxMatErrors<T> implements OnInit {
   @ContentChildren(NgxMatErrorDef, { descendants: true })
   readonly customErrorMessages!: QueryList<NgxMatErrorDef>;
 
-  readonly error$!: Observable<string>;
+  readonly error$ = defer(() => {
+    if (!this.control && this.matFormField) {
+      this.control = this.matFormField._control;
+    }
+    if (!this.control) {
+      return '';
+    }
+    const control = this.control.ngControl;
+    const stateChanges = this.control.stateChanges;
+    if (!control || !stateChanges) {
+      // TODO: Throw error;
+      return '';
+    }
+    return this.initError(control, stateChanges);
+  });
 
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('ngx-mat-errors')
   control?: MatFormFieldControl<any> | '' | null;
 
-  ngOnInit() {
-    if (!this.control && this.matFormField) {
-      this.control = this.matFormField._control;
-    }
-    if (this.control) {
-      const control = this.control.ngControl;
-      const stateChanges = this.control.stateChanges;
-      if (control && stateChanges) {
-        this.initError(control, stateChanges);
-      }
-    }
-  }
-
-  private initError(control: NgControl | AbstractControlDirective, stateChanges: Observable<any>) {
-    (this as any).error$ = stateChanges.pipe(
+  private initError(
+    control: NgControl | AbstractControlDirective,
+    stateChanges: Observable<any>
+  ) {
+    return stateChanges.pipe(
       startWith(null as any),
       map(() => {
         if (!control.errors) {
@@ -156,7 +163,7 @@ export class NgxMatErrors<T> implements OnInit {
     this.cdRef.markForCheck();
   }
 
-  private _getCustomErrorMessage(errors: string[]) {
+  private _getCustomErrorMessage(errors: string[]): NgxMatErrorDef | undefined {
     return this.customErrorMessages.find((customErrorMessage) =>
       errors.some((error) => error === customErrorMessage.ngxMatErrorDefFor)
     );
