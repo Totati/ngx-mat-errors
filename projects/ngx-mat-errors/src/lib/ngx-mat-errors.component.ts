@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -13,19 +14,17 @@ import {
   TemplateRef,
   ViewChild,
   ViewContainerRef,
-  ViewEncapsulation,
+  ViewEncapsulation
 } from '@angular/core';
 import {
-  AbstractControlDirective,
-  NgControl,
-  ValidationErrors,
+  AbstractControl, ValidationErrors
 } from '@angular/forms';
 import {
   MatFormField,
   MatFormFieldControl,
-  MAT_FORM_FIELD,
+  MAT_FORM_FIELD
 } from '@angular/material/form-field';
-import { defer, Observable } from 'rxjs';
+import { defer } from 'rxjs';
 import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
 import { DEFAULT_ERROR_MESSAGES, ErrorMessages } from './error-meassages';
 import { getNgxMatErrorDefMissingForError } from './errors';
@@ -40,6 +39,7 @@ export interface ErrorOutletContext<T> {
 
 @Directive({
   selector: '[ngxMatErrorDef]',
+  standalone: true,
 })
 export class NgxMatErrorDef implements OnInit {
   @Input() ngxMatErrorDefFor!: string;
@@ -54,6 +54,7 @@ export class NgxMatErrorDef implements OnInit {
 
 @Directive({
   selector: '[ngxMatErrorOutlet]',
+  standalone: true,
 })
 export class NgxMatErrorOutlet {
   constructor(public readonly viewContainer: ViewContainerRef) {}
@@ -65,6 +66,8 @@ export class NgxMatErrorOutlet {
     }}<ng-container ngxMatErrorOutlet></ng-container>`,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [AsyncPipe, NgxMatErrorOutlet],
   host: {
     class: 'ngx-mat-errors',
   },
@@ -72,6 +75,16 @@ export class NgxMatErrorOutlet {
 export class NgxMatErrors<T> {
   private readonly messages: ErrorMessages;
   private readonly messageKeys: Set<string>;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
+  @Input('ngx-mat-errors')
+  control?: MatFormFieldControl<any> | '' | null;
+
+  @ViewChild(NgxMatErrorOutlet, { static: true })
+  readonly errorOutlet!: NgxMatErrorOutlet;
+
+  @ContentChildren(NgxMatErrorDef, { descendants: true })
+  readonly customErrorMessages!: QueryList<NgxMatErrorDef>;
+
   constructor(
     private readonly cdRef: ChangeDetectorRef,
     @Optional()
@@ -85,12 +98,6 @@ export class NgxMatErrors<T> {
     this.messageKeys = new Set(Object.keys(this.messages));
   }
 
-  @ViewChild(NgxMatErrorOutlet, { static: true })
-  readonly errorOutlet!: NgxMatErrorOutlet;
-
-  @ContentChildren(NgxMatErrorDef, { descendants: true })
-  readonly customErrorMessages!: QueryList<NgxMatErrorDef>;
-
   readonly error$ = defer(() => {
     if (!this.control && this.matFormField) {
       this.control = this.matFormField._control;
@@ -98,38 +105,26 @@ export class NgxMatErrors<T> {
     if (!this.control) {
       return '';
     }
-    const control = this.control.ngControl;
-    const stateChanges = this.control.stateChanges;
-    if (!control || !stateChanges) {
+    const control = this.control.ngControl?.control;
+    if (!control) {
       // TODO: Throw error;
       return '';
     }
-    return this.initError(control, stateChanges);
+    return this.initError(control);
   });
 
-  // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('ngx-mat-errors')
-  control?: MatFormFieldControl<any> | '' | null;
-
   private initError(
-    control: NgControl | AbstractControlDirective,
-    stateChanges: Observable<any>
+    control: AbstractControl<any, any>,
   ) {
-    return stateChanges.pipe(
+    return control.valueChanges.pipe(
       startWith(null as any),
       map(() => {
         if (!control.errors) {
-          return;
+          return '';
         }
         const errorKeys = Object.keys(control.errors);
         const customErrorMessage = this._getCustomErrorMessage(errorKeys);
-        if (customErrorMessage) {
-          return customErrorMessage;
-        }
-        return errorKeys.find((key) => this.messageKeys.has(key));
-      }),
-      distinctUntilChanged(),
-      map((errorOrErrorDef) => {
+        const errorOrErrorDef = customErrorMessage ??  errorKeys.find((key) => this.messageKeys.has(key));
         this.errorOutlet.viewContainer.clear();
         if (!errorOrErrorDef) {
           return '';
