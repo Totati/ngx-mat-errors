@@ -1,20 +1,16 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, Provider } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatCardModule } from '@angular/material/card';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {
-  NgxMatErrorsModule,
-  NGX_MAT_ERROR_DEFAULT_OPTIONS,
   DEFAULT_ERROR_MESSAGES,
   MinError,
+  NGX_MAT_ERROR_DEFAULT_OPTIONS,
 } from 'ngx-mat-errors';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
 
 export const NGX_MAT_ERROR_DEFAULT_CONFIG: Provider = {
   useFactory: () => {
@@ -33,13 +29,8 @@ export const NGX_MAT_ERROR_DEFAULT_CONFIG: Provider = {
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    NgxMatErrorsModule,
+    MatButtonModule,
     MatToolbarModule,
-    MatCardModule,
-    ReactiveFormsModule,
-    FormsModule
   ],
   providers: [NGX_MAT_ERROR_DEFAULT_CONFIG],
   bootstrap: [AppComponent],
