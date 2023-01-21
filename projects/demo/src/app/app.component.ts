@@ -1,21 +1,12 @@
-import { Component } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None
 })
 export class AppComponent {
-  readonly control1 = new FormControl<string>('', [
-    Validators.required,
-    Validators.pattern('[0-9]{0,2}'),
-  ]);
-  readonly control2 = new FormControl<number | null>(null, [
-    Validators.min(10),
-    Validators.max(20),
-  ]);
 
-  value1: string | null = null;
-  value2: number | null = null;
 }

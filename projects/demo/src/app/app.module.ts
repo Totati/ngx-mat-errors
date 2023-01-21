@@ -1,31 +1,14 @@
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, Provider } from '@angular/core';
 
+import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  NGX_MAT_ERROR_CONFIG_EN
+} from 'ngx-mat-errors';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatCardModule } from '@angular/material/card';
-import {
-  NgxMatErrorsModule,
-  NGX_MAT_ERROR_DEFAULT_OPTIONS,
-  DEFAULT_ERROR_MESSAGES,
-  MinError,
-} from 'ngx-mat-errors';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
-export const NGX_MAT_ERROR_DEFAULT_CONFIG: Provider = {
-  useFactory: () => {
-    return {
-      ...DEFAULT_ERROR_MESSAGES,
-      min: (error: MinError) =>
-        `Min value is ${error.min}, actual is ${error.actual}`,
-    };
-  },
-  provide: NGX_MAT_ERROR_DEFAULT_OPTIONS,
-};
 
 @NgModule({
   declarations: [AppComponent],
@@ -33,15 +16,10 @@ export const NGX_MAT_ERROR_DEFAULT_CONFIG: Provider = {
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatFormFieldModule,
-    MatInputModule,
-    NgxMatErrorsModule,
+    MatButtonModule,
     MatToolbarModule,
-    MatCardModule,
-    ReactiveFormsModule,
-    FormsModule
   ],
-  providers: [NGX_MAT_ERROR_DEFAULT_CONFIG],
+  providers: [NGX_MAT_ERROR_CONFIG_EN],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,13 +1,16 @@
+p {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
 .container {
   max-width: 700px;
   margin-left: auto;
   margin-right: auto;
 }
-.mat-card {
-  margin: 1rem;
+.mat-mdc-card {
+  margin: 0.5rem;
 }
 
-.mat-card-content{
-  display: flex;
-  flex-direction: column;
+.mat-mdc-form-field {
+  width: 100%;
 }
