@@ -14,15 +14,13 @@ import {
   TemplateRef,
   ViewChild,
   ViewContainerRef,
-  ViewEncapsulation
+  ViewEncapsulation,
 } from '@angular/core';
-import {
-  AbstractControl, ValidationErrors
-} from '@angular/forms';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
 import {
   MatFormField,
   MatFormFieldControl,
-  MAT_FORM_FIELD
+  MAT_FORM_FIELD,
 } from '@angular/material/form-field';
 import { defer } from 'rxjs';
 import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
@@ -113,19 +111,19 @@ export class NgxMatErrors<T> {
     return this.initError(control);
   });
 
-  private initError(
-    control: AbstractControl<any, any>,
-  ) {
+  private initError(control: AbstractControl<any, any>) {
     return control.valueChanges.pipe(
       startWith(null as any),
       map(() => {
+        this.errorOutlet.viewContainer.clear();
         if (!control.errors) {
           return '';
         }
         const errorKeys = Object.keys(control.errors);
         const customErrorMessage = this._getCustomErrorMessage(errorKeys);
-        const errorOrErrorDef = customErrorMessage ??  errorKeys.find((key) => this.messageKeys.has(key));
-        this.errorOutlet.viewContainer.clear();
+        const errorOrErrorDef =
+          customErrorMessage ??
+          errorKeys.find((key) => this.messageKeys.has(key));
         if (!errorOrErrorDef) {
           return '';
         }
