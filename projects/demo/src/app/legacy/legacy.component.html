@@ -6,7 +6,7 @@
     <p>Error message outside of a <code>mat-form-field</code>.</p>
     <mat-error [ngx-mat-errors]="input1">
       <span *ngxMatErrorDef="let error; for: 'pattern'">
-        Only digits are allowed, up to 2 digits.
+        Only digits are allowed, up to 2 digits. Error: {{ error | json }}
       </span>
     </mat-error>
     <p>
@@ -24,7 +24,7 @@
       />
       <mat-error ngx-mat-errors>
         <span *ngxMatErrorDef="let error; for: 'pattern'">
-          Only digits are allowed, up to 2 digits.
+          Only digits are allowed, up to 2 digits. Error: {{ error | json }}
         </span>
       </mat-error>
       <mat-hint>Only digits are allowed, up to 2 digits.</mat-hint>
@@ -40,7 +40,7 @@
       />
       <mat-error ngx-mat-errors>
         <ng-container *ngxMatErrorDef="let error; for: 'max'">
-          Maximum value is {{ error.max }}.
+          Maximum value is {{ error.max }}. Error: {{ error | json }}
         </ng-container>
       </mat-error>
       <mat-hint>Min value is 10, max is 20</mat-hint>
@@ -55,7 +55,7 @@
     <p>Error message outside of a <code>mat-form-field</code>.</p>
     <mat-error [ngx-mat-errors]="input2">
       <span *ngxMatErrorDef="let error; for: 'pattern'">
-        Only digits are allowed, up to 2 digits.
+        Only digits are allowed, up to 2 digits. Error: {{ error | json }}
       </span>
     </mat-error>
     <p>
@@ -75,7 +75,7 @@
       />
       <mat-error ngx-mat-errors>
         <span *ngxMatErrorDef="let error; for: 'pattern'">
-          Only digits are allowed, up to 2 digits.
+          Only digits are allowed, up to 2 digits. Error: {{ error | json }}
         </span>
       </mat-error>
       <mat-hint>Only digits are allowed, up to 2 digits.</mat-hint>
@@ -93,7 +93,7 @@
       />
       <mat-error ngx-mat-errors>
         <ng-container *ngxMatErrorDef="let error; for: 'max'">
-          Maximum value is {{ error.max }}.
+          Maximum value is {{ error.max }}. Error: {{ error | json }}
         </ng-container>
       </mat-error>
       <mat-hint>Min value is 10, max is 20</mat-hint>
