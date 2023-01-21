@@ -85,6 +85,7 @@ export class NgxMatErrors<T> {
 
   constructor(
     private readonly cdRef: ChangeDetectorRef,
+    /** @breaking-change 16.0.0 make messages required */
     @Optional()
     @Inject(NGX_MAT_ERROR_DEFAULT_OPTIONS)
     messages: ErrorMessages | null,
@@ -93,6 +94,9 @@ export class NgxMatErrors<T> {
     private readonly matFormField: MatFormField
   ) {
     this.messages = messages || DEFAULT_ERROR_MESSAGES;
+    if(!messages){
+      console.warn('Please provide NGX_MAT_ERROR_DEFAULT_OPTIONS!')
+    }
     this.messageKeys = new Set(Object.keys(this.messages));
   }
 

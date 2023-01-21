@@ -25,6 +25,9 @@ export interface PatternValidator {
   actualValue: string;
 }
 
+/**
+ * @deprecated DEFAULT_ERROR_MESSAGES will be removed in version 16.0.0, please provide NGX_MAT_ERROR_DEFAULT_OPTIONS
+ */
 export const DEFAULT_ERROR_MESSAGES: ErrorMessages = {
   min: (error: MinError) =>
   `Please enter a value greater than or equal to ${error.min}.`,
