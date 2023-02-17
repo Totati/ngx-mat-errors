@@ -1,3 +1,4 @@
+import { coerceArray } from '@angular/cdk/coercion';
 import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
@@ -6,18 +7,24 @@ import {
   Directive,
   InjectionToken,
   Input,
+  OnChanges,
   OnInit,
   QueryList,
+  SimpleChanges,
   TemplateRef,
   ViewEncapsulation,
   inject,
 } from '@angular/core';
-import { ValidationErrors } from '@angular/forms';
+import {
+  AbstractControl,
+  ControlContainer,
+  ValidationErrors,
+} from '@angular/forms';
 import {
   MAT_FORM_FIELD,
   MatFormFieldControl,
 } from '@angular/material/form-field';
-import { Observable, defer, of } from 'rxjs';
+import { Observable, combineLatest, defer, of } from 'rxjs';
 import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
 import { ErrorMessages } from './error-messages';
 import { getNgxMatErrorDefMissingForError } from './errors';
@@ -41,15 +48,27 @@ export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<ErrorMessages>(
   selector: '[ngxMatErrorDef]',
   standalone: true,
 })
-export class NgxMatErrorDef implements OnInit {
+export class NgxMatErrorDef implements OnInit, OnChanges {
   @Input() ngxMatErrorDefFor!: string;
+  @Input() ngxMatErrorDefControl?:
+    | AbstractControl
+    | AbstractControl[]
+    | string
+    | string[];
   public readonly template = inject(TemplateRef);
+  private readonly parentControl = inject(ControlContainer, {
+    optional: true,
+    skipSelf: true,
+    host: true,
+  });
 
   ngOnInit() {
     if (!this.ngxMatErrorDefFor) {
       throw getNgxMatErrorDefMissingForError();
     }
   }
+
+  ngOnChanges(changes: SimpleChanges): void {}
 }
 
 @Component({
@@ -78,32 +97,46 @@ export class NgxMatErrors {
 
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('ngx-mat-errors')
-  control?: MatFormFieldControl<any> | '' | null;
+  control?:
+    | MatFormFieldControl<any>
+    | AbstractControl
+    | AbstractControl[]
+    | null
+    | '';
 
   protected readonly error$: Observable<ErrorTemplate> = defer(() => {
-    const control = (this.control || this.matFormField?._control)?.ngControl
-      ?.control;
-    if (!control) {
+    const controls = getAbstractControls(
+      this.control || this.matFormField?._control
+    );
+    if (!controls) {
       // TODO: Throw error;
       return of(undefined);
     }
-    return control.valueChanges.pipe(
-      startWith(null as any),
+    return combineLatest(
+      controls.map((c) => c.valueChanges.pipe(startWith(c.value)))
+    ).pipe(
       map(() => {
-        if (!control.errors) {
+        const firstControlWithError = controls.find((c) => c.invalid);
+        const errors = firstControlWithError?.errors;
+        if (!errors) {
           return;
         }
-        const errorKeys = Object.keys(control.errors);
+        const errorKeys = Object.keys(errors);
         const errorOrErrorDef =
-          this.customErrorMessages.find((customErrorMessage) =>
-            errorKeys.some(
-              (error) => error === customErrorMessage.ngxMatErrorDefFor
-            )
+          this.customErrorMessages.find(
+            ({ ngxMatErrorDefFor, ngxMatErrorDefControl }) =>
+              errorKeys.some(
+                (error) =>
+                  error === ngxMatErrorDefFor &&
+                  (!ngxMatErrorDefControl ||
+                    coerceArray(ngxMatErrorDefControl).includes(
+                      firstControlWithError
+                    ))
+              )
           ) ?? errorKeys.find((key) => key in this.messages);
         if (!errorOrErrorDef) {
           return;
         }
-        const errors = control.errors as ValidationErrors;
         if (errorOrErrorDef instanceof NgxMatErrorDef) {
           return {
             template: errorOrErrorDef.template,
@@ -122,4 +155,26 @@ export class NgxMatErrors {
       distinctUntilChanged()
     );
   });
+}
+
+function getAbstractControls(
+  controls:
+    | undefined
+    | null
+    | ''
+    | AbstractControl[]
+    | AbstractControl
+    | MatFormFieldControl<any>
+): AbstractControl[] | undefined {
+  if (!controls) {
+    return;
+  }
+  if (Array.isArray(controls)) {
+    return controls;
+  }
+  const control =
+    controls instanceof AbstractControl
+      ? controls
+      : controls.ngControl?.control;
+  return control ? [control] : undefined;
 }
