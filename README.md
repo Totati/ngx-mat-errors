@@ -10,7 +10,7 @@ NgxMatErrors provides an easy, yet flexible solution for displaying error messag
 
 ## Try it
 
-See it in action on [StackBlitz](https://stackblitz.com/edit/ngx-mat-errors-angular-15?file=src%2Fapp%2Fapp.component.html)
+See it in action on [StackBlitz](https://stackblitz.com/edit/ngx-mat-errors-angular-16?file=src%2Fapp%2Fapp.component.html)
 
 ## How to use it?
 
@@ -118,8 +118,8 @@ You can customize your error messages even more with `*ngxMatErrorDef` directive
 
 ## Compatibility
 
-- `@angular/core`: `^15.0.0`,
-- `@angular/material`: `^15.0.0`,
+- `@angular/core`: `^16.0.0`,
+- `@angular/material`: `^16.0.0`,
 
 ### Reactve forms
 
