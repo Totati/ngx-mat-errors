@@ -15,6 +15,7 @@ import {
   ViewChild,
   ViewContainerRef,
   ViewEncapsulation,
+  inject,
 } from '@angular/core';
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import {
@@ -24,7 +25,7 @@ import {
 } from '@angular/material/form-field';
 import { defer } from 'rxjs';
 import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
-import { DEFAULT_ERROR_MESSAGES, ErrorMessages } from './error-meassages';
+import { ErrorMessages } from './error-meassages';
 import { getNgxMatErrorDefMissingForError } from './errors';
 
 export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<ErrorMessages>(
@@ -71,7 +72,7 @@ export class NgxMatErrorOutlet {
   },
 })
 export class NgxMatErrors<T> {
-  private readonly messages: ErrorMessages;
+  private readonly messages = inject(NGX_MAT_ERROR_DEFAULT_OPTIONS);
   private readonly messageKeys: Set<string>;
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('ngx-mat-errors')
@@ -85,18 +86,10 @@ export class NgxMatErrors<T> {
 
   constructor(
     private readonly cdRef: ChangeDetectorRef,
-    /** @breaking-change 16.0.0 make messages required */
-    @Optional()
-    @Inject(NGX_MAT_ERROR_DEFAULT_OPTIONS)
-    messages: ErrorMessages | null,
     @Optional()
     @Inject(MAT_FORM_FIELD)
     private readonly matFormField: MatFormField
   ) {
-    this.messages = messages || DEFAULT_ERROR_MESSAGES;
-    if(!messages){
-      console.warn('Please provide NGX_MAT_ERROR_DEFAULT_OPTIONS!')
-    }
     this.messageKeys = new Set(Object.keys(this.messages));
   }
 
