@@ -24,7 +24,7 @@ import {
   MAT_FORM_FIELD,
 } from '@angular/material/form-field';
 import { defer } from 'rxjs';
-import { distinctUntilChanged, map, startWith, combineLatestWith } from 'rxjs/operators';
+import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
 import { ErrorMessages } from './error-meassages';
 import { getNgxMatErrorDefMissingForError } from './errors';
 
@@ -110,7 +110,6 @@ export class NgxMatErrors<T> {
 
   private initError(control: AbstractControl<any, any>) {
     return control.valueChanges.pipe(
-      combineLatestWith(control.statusChanges),
       startWith(null as any),
       map(() => {
         this.errorOutlet.viewContainer.clear();
