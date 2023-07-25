@@ -7,7 +7,7 @@
     "build": "ng build",
     "build:prod": "ng build demo --configuration production ",
     "build:lib": "ng build ngx-mat-errors --configuration production && npm run copy-readme",
-    "test": "ng test",
+    "test": "ng test ngx-mat-errors",
     "lint": "ng lint",
     "develop": "ng build ngx-mat-errors --watch",
     "copy-readme": "copyfiles ./README.md dist/ngx-mat-errors"
