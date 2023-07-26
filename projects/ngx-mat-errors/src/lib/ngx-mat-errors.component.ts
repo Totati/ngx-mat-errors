@@ -1,40 +1,41 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ContentChildren,
   Directive,
-  Inject,
   InjectionToken,
   Input,
   OnInit,
-  Optional,
   QueryList,
   TemplateRef,
-  ViewChild,
-  ViewContainerRef,
   ViewEncapsulation,
   inject,
 } from '@angular/core';
-import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { ValidationErrors } from '@angular/forms';
 import {
-  MatFormField,
-  MatFormFieldControl,
   MAT_FORM_FIELD,
+  MatFormFieldControl,
 } from '@angular/material/form-field';
-import { defer } from 'rxjs';
+import { Observable, defer, of } from 'rxjs';
 import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
 import { ErrorMessages } from './error-meassages';
 import { getNgxMatErrorDefMissingForError } from './errors';
 
+export type ErrorTemplate =
+  | {
+      template: TemplateRef<any>;
+      $implicit: ValidationErrors;
+    }
+  | {
+      template: undefined;
+      $implicit: string;
+    }
+  | undefined;
+
 export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<ErrorMessages>(
   'NGX_MAT_ERROR_DEFAULT_OPTIONS'
 );
-
-export interface ErrorOutletContext<T> {
-  $implicit?: T;
-}
 
 @Directive({
   selector: '[ngxMatErrorDef]',
@@ -42,7 +43,7 @@ export interface ErrorOutletContext<T> {
 })
 export class NgxMatErrorDef implements OnInit {
   @Input() ngxMatErrorDefFor!: string;
-  constructor(public template: TemplateRef<any>) {}
+  public readonly template = inject(TemplateRef);
 
   ngOnInit() {
     if (!this.ngxMatErrorDefFor) {
@@ -51,111 +52,74 @@ export class NgxMatErrorDef implements OnInit {
   }
 }
 
-@Directive({
-  selector: '[ngxMatErrorOutlet]',
-  standalone: true,
-})
-export class NgxMatErrorOutlet {
-  constructor(public readonly viewContainer: ViewContainerRef) {}
-}
-
 @Component({
   selector: 'ngx-mat-errors, [ngx-mat-errors]',
-  template: `{{ error$ | async
-    }}<ng-container ngxMatErrorOutlet></ng-container>`,
+  template: `<ng-template #defaultTemplate let-error>{{ error }}</ng-template
+    ><ng-template [ngIf]="error$ | async" let-error
+      ><ng-template
+        [ngTemplateOutlet]="error.template ?? defaultTemplate"
+        [ngTemplateOutletContext]="error"
+      ></ng-template>
+    </ng-template>`,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [AsyncPipe, NgxMatErrorOutlet],
+  imports: [NgIf, AsyncPipe, NgTemplateOutlet],
   host: {
     class: 'ngx-mat-errors',
   },
 })
-export class NgxMatErrors<T> {
+export class NgxMatErrors {
   private readonly messages = inject(NGX_MAT_ERROR_DEFAULT_OPTIONS);
-  private readonly messageKeys: Set<string>;
+  private readonly matFormField = inject(MAT_FORM_FIELD, { optional: true });
+
+  @ContentChildren(NgxMatErrorDef, { descendants: true })
+  private readonly customErrorMessages!: QueryList<NgxMatErrorDef>;
+
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('ngx-mat-errors')
   control?: MatFormFieldControl<any> | '' | null;
 
-  @ViewChild(NgxMatErrorOutlet, { static: true })
-  readonly errorOutlet!: NgxMatErrorOutlet;
-
-  @ContentChildren(NgxMatErrorDef, { descendants: true })
-  readonly customErrorMessages!: QueryList<NgxMatErrorDef>;
-
-  constructor(
-    private readonly cdRef: ChangeDetectorRef,
-    @Optional()
-    @Inject(MAT_FORM_FIELD)
-    private readonly matFormField: MatFormField
-  ) {
-    this.messageKeys = new Set(Object.keys(this.messages));
-  }
-
-  readonly error$ = defer(() => {
-    if (!this.control && this.matFormField) {
-      this.control = this.matFormField._control;
-    }
-    if (!this.control) {
-      return '';
-    }
-    const control = this.control.ngControl?.control;
+  protected readonly error$: Observable<ErrorTemplate> = defer(() => {
+    const control = (this.control || this.matFormField?._control)?.ngControl
+      ?.control;
     if (!control) {
       // TODO: Throw error;
-      return '';
+      return of(undefined);
     }
-    return this.initError(control);
-  });
-
-  private initError(control: AbstractControl<any, any>) {
     return control.valueChanges.pipe(
       startWith(null as any),
       map(() => {
-        this.errorOutlet.viewContainer.clear();
         if (!control.errors) {
-          return '';
+          return;
         }
         const errorKeys = Object.keys(control.errors);
-        const customErrorMessage = this._getCustomErrorMessage(errorKeys);
         const errorOrErrorDef =
-          customErrorMessage ??
-          errorKeys.find((key) => this.messageKeys.has(key));
+          this.customErrorMessages.find((customErrorMessage) =>
+            errorKeys.some(
+              (error) => error === customErrorMessage.ngxMatErrorDefFor
+            )
+          ) ?? errorKeys.find((key) => key in this.messages);
         if (!errorOrErrorDef) {
-          return '';
+          return;
         }
         const errors = control.errors as ValidationErrors;
         if (errorOrErrorDef instanceof NgxMatErrorDef) {
-          this._populateErrorOutlet(errorOrErrorDef, errors);
-          return '';
+          return {
+            template: errorOrErrorDef.template,
+            $implicit: errors[errorOrErrorDef.ngxMatErrorDefFor],
+          };
         }
         const message = this.messages[errorOrErrorDef];
-        if (typeof message === 'function') {
-          return message(errors[errorOrErrorDef]);
-        }
-        return message;
+        return {
+          $implicit:
+            typeof message === 'function'
+              ? message(errors[errorOrErrorDef])
+              : message,
+        };
       }),
+      // this distincts only undefined values
       distinctUntilChanged()
     );
-  }
-
-  private _populateErrorOutlet(
-    errorDef: NgxMatErrorDef,
-    errors: ValidationErrors
-  ) {
-    const context: ErrorOutletContext<T> = {
-      $implicit: errors[errorDef.ngxMatErrorDefFor],
-    };
-    this.errorOutlet.viewContainer.createEmbeddedView(
-      errorDef.template,
-      context
-    );
-    this.cdRef.markForCheck();
-  }
-
-  private _getCustomErrorMessage(errors: string[]): NgxMatErrorDef | undefined {
-    return this.customErrorMessages.find((customErrorMessage) =>
-      errors.some((error) => error === customErrorMessage.ngxMatErrorDefFor)
-    );
-  }
+  });
 }
