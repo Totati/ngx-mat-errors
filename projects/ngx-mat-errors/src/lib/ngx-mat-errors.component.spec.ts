@@ -12,7 +12,7 @@ import {
   NGX_MAT_ERROR_DEFAULT_OPTIONS,
   NgxMatErrorsModule,
 } from 'ngx-mat-errors';
-import { LengthError } from './error-meassages';
+import { LengthError } from './error-messages';
 import { getNgxMatErrorDefMissingForError } from './errors';
 
 const defaultProviders: Provider[] = [

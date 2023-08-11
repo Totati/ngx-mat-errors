@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { FactoryProvider, LOCALE_ID } from '@angular/core';
-import { ErrorMessages, LengthError, MaxError, MinError } from '../error-meassages';
+import { ErrorMessages, LengthError, MaxError, MinError } from '../error-messages';
 import { NGX_MAT_ERROR_DEFAULT_OPTIONS } from '../ngx-mat-errors.component';
 
 export function errorMessagesHuFactory(locale: string, format = 'shortDate'): ErrorMessages {
@@ -16,12 +16,12 @@ export function errorMessagesHuFactory(locale: string, format = 'shortDate'): Er
     server: (error: string) => error,
     matDatepickerMin: (error: MinError) => {
       const formatted = formatDate(error.min, format, locale);
-      // In Hungarian dates are ending with '.'
+      // In Hungarian date ends with '.'
       return `Nem lehet korábbi dátum, mint ${formatted ?? error.min}`;
     },
     matDatepickerMax: (error: MaxError) => {
       const formatted = formatDate(error.max, format, locale);
-      // In Hungarian dates are ending with '.'
+      // In Hungarian date ends with '.'
       return `Nem lehet későbbi dátum, mint ${formatted ?? error.max}`;
     },
   };

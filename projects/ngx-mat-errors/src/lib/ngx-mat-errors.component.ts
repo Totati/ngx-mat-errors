@@ -19,7 +19,7 @@ import {
 } from '@angular/material/form-field';
 import { Observable, defer, of } from 'rxjs';
 import { distinctUntilChanged, map, startWith } from 'rxjs/operators';
-import { ErrorMessages } from './error-meassages';
+import { ErrorMessages } from './error-messages';
 import { getNgxMatErrorDefMissingForError } from './errors';
 
 export type ErrorTemplate =
