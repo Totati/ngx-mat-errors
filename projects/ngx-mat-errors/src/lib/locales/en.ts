@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
 import { FactoryProvider, LOCALE_ID } from '@angular/core';
-import { ErrorMessages, LengthError, MaxError, MinError } from '../error-meassages';
+import { ErrorMessages, LengthError, MaxError, MinError } from '../error-messages';
 import { NGX_MAT_ERROR_DEFAULT_OPTIONS } from '../ngx-mat-errors.component';
 
 export function errorMessagesEnFactory(
