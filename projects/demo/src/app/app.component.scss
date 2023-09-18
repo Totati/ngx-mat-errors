@@ -7,6 +7,11 @@ p {
   margin-left: auto;
   margin-right: auto;
 }
+
+fieldset {
+  border: none;
+}
+fieldset,
 .mat-mdc-card {
   margin: 0.5rem;
 }

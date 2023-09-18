@@ -1,27 +1,31 @@
+<fieldset>
+  <legend>Outer NgxMatErrors control</legend>
+  <mat-radio-group [formControl]="outerErrorControl">
+    <mat-radio-button [value]="1">None</mat-radio-button>
+    <mat-radio-button [value]="2">Input 1</mat-radio-button>
+    <mat-radio-button [value]="3">Input 2</mat-radio-button>
+  </mat-radio-group>
+</fieldset>
+
 <mat-card>
   <mat-card-header>
     <mat-card-title> Reactive forms </mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <p>Error message outside of a <code>mat-form-field</code>.</p>
-    <mat-error [ngx-mat-errors]="input1">
-      <span *ngxMatErrorDef="let error; for: 'pattern'">
-        Only digits are allowed, up to 2 digits. Error: {{ error | json }}
-      </span>
-    </mat-error>
     <p>
       A MatFormField with automatic error message and customized pattern
       message.
     </p>
+    <p>Error message outside of a <code>mat-form-field</code>.
+      <mat-error [ngx-mat-errors]="getMatInput(input1, input2)">
+        <span *ngxMatErrorDef="let error; for: 'pattern'">
+          Only digits are allowed, up to 2 digits. Error: {{ error | json }}
+        </span>
+      </mat-error>
+    </p>
     <mat-form-field appearance="outline">
-      <mat-label>Input</mat-label>
-      <input
-        type="text"
-        matInput
-        #input1="matInput"
-        [formControl]="control1"
-        autocomplete="off"
-      />
+      <mat-label>Input 1</mat-label>
+      <input type="text" matInput #input1="matInput" [formControl]="control1" autocomplete="off" />
       <mat-error ngx-mat-errors>
         <span *ngxMatErrorDef="let error; for: 'pattern'">
           Only digits are allowed, up to 2 digits. Error: {{ error | json }}
@@ -31,13 +35,8 @@
     </mat-form-field>
     <p>Custom min and max error messages</p>
     <mat-form-field appearance="outline">
-      <mat-label>Input</mat-label>
-      <input
-        type="number"
-        matInput
-        [formControl]="control2"
-        autocomplete="off"
-      />
+      <mat-label>Input 2</mat-label>
+      <input type="number" matInput #input2="matInput" [formControl]="control2" autocomplete="off" />
       <mat-error ngx-mat-errors>
         <ng-container *ngxMatErrorDef="let error; for: 'max'">
           Maximum value is {{ error.max }}. Error: {{ error | json }}
@@ -53,7 +52,7 @@
   </mat-card-header>
   <mat-card-content>
     <p>Error message outside of a <code>mat-form-field</code>.</p>
-    <mat-error [ngx-mat-errors]="input2">
+    <mat-error [ngx-mat-errors]="getMatInput(input3, input4)">
       <span *ngxMatErrorDef="let error; for: 'pattern'">
         Only digits are allowed, up to 2 digits. Error: {{ error | json }}
       </span>
@@ -63,16 +62,9 @@
       message.
     </p>
     <mat-form-field appearance="outline">
-      <mat-label>Input</mat-label>
-      <input
-        type="text"
-        matInput
-        #input2="matInput"
-        [(ngModel)]="value1"
-        required
-        pattern="[0-9]{0,2}"
-        autocomplete="off"
-      />
+      <mat-label>Input 1</mat-label>
+      <input type="text" matInput #input3="matInput" [(ngModel)]="value1" required pattern="[0-9]{0,2}"
+        autocomplete="off" />
       <mat-error ngx-mat-errors>
         <span *ngxMatErrorDef="let error; for: 'pattern'">
           Only digits are allowed, up to 2 digits. Error: {{ error | json }}
@@ -82,15 +74,8 @@
     </mat-form-field>
     <p>Custom min and max error messages</p>
     <mat-form-field appearance="outline">
-      <mat-label>Input</mat-label>
-      <input
-        type="number"
-        matInput
-        min="10"
-        max="20"
-        [(ngModel)]="value2"
-        autocomplete="off"
-      />
+      <mat-label>Input 2</mat-label>
+      <input type="number" matInput #input4="matInput"  min="10" max="20" [(ngModel)]="value2" autocomplete="off" />
       <mat-error ngx-mat-errors>
         <ng-container *ngxMatErrorDef="let error; for: 'max'">
           Maximum value is {{ error.max }}. Error: {{ error | json }}

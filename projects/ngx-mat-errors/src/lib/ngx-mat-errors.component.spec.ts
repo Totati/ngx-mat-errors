@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { NgIf } from '@angular/common';
 import { Component, Provider } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -34,8 +35,8 @@ const defaultImports = [
   NgxMatErrorsModule,
 ];
 
-function createControl() {
-  return new FormControl('12', [Validators.minLength(3), Validators.email]);
+function createControl(value = '12') {
+  return new FormControl(value, [Validators.minLength(3), Validators.email]);
 }
 
 function updateControlValidators(control: FormControl) {
@@ -49,6 +50,121 @@ describe('NgxMatErrors', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule],
+    });
+  });
+
+  describe('out of MatFormField', () => {
+    @Component({
+      standalone: true,
+      imports: [...defaultImports, NgIf],
+      providers: [...defaultProviders],
+      template: ` <mat-error ngx-mat-errors></mat-error> `,
+    })
+    class NgxMatErrorWithoutControl {}
+
+    it('should not render anything when no control is connected', async () => {
+      const fixture = TestBed.createComponent(NgxMatErrorWithoutControl);
+      fixture.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(fixture);
+
+      const matError = await loader.getHarness(MatErrorHarness);
+      expect(await matError.getText()).toBe('');
+    });
+
+    @Component({
+      standalone: true,
+      imports: [...defaultImports],
+      providers: [...defaultProviders],
+      template: `
+        <mat-error [ngx-mat-errors]="input"></mat-error>
+        <mat-form-field>
+          <mat-label>Label</mat-label>
+          <input matInput [formControl]="control" #input="matInput" />
+        </mat-form-field>
+      `,
+    })
+    class NgxMatErrorWithoutDefWithControl {
+      control = createControl();
+    }
+
+    it('should render error control is connected manually', async () => {
+      const fixture = TestBed.createComponent(NgxMatErrorWithoutDefWithControl);
+      fixture.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(fixture);
+
+      const matError = await loader.getHarness(MatErrorHarness);
+      expect(await matError.getText()).toBe('2 3');
+    });
+
+    @Component({
+      standalone: true,
+      imports: [...defaultImports, NgIf],
+      providers: [...defaultProviders],
+      template: `
+        <mat-error
+          [ngx-mat-errors]="isControlOneSelected ? input1 : input2"
+        ></mat-error>
+        <mat-form-field>
+          <mat-label>Label</mat-label>
+          <input matInput [formControl]="control1" #input1="matInput" />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Label</mat-label>
+          <input matInput [formControl]="control2" #input2="matInput" />
+        </mat-form-field>
+      `,
+    })
+    class NgxMatErrorWithControlChange {
+      control1 = createControl();
+      control2 = createControl('123');
+      isControlOneSelected = true;
+    }
+
+    it('should handle control change', async () => {
+      const fixture = TestBed.createComponent(NgxMatErrorWithControlChange);
+      fixture.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(fixture);
+
+      const matError = await loader.getHarness(MatErrorHarness);
+      expect(await matError.getText()).toBe('2 3');
+
+      fixture.componentInstance.isControlOneSelected = false;
+      fixture.detectChanges();
+
+      expect(await matError.getText()).toBe('email');
+    });
+
+    @Component({
+      standalone: true,
+      imports: [...defaultImports, NgIf],
+      providers: [...defaultProviders],
+      template: `
+        <mat-error
+          [ngx-mat-errors]="isControlOneSelected ? input1 : undefined"
+        ></mat-error>
+        <mat-form-field>
+          <mat-label>Label</mat-label>
+          <input matInput [formControl]="control1" #input1="matInput" />
+        </mat-form-field>
+      `,
+    })
+    class NgxMatErrorWithControlRemoved {
+      control1 = createControl();
+      isControlOneSelected = true;
+    }
+
+    it('should clear error when connected control is removed', async () => {
+      const fixture = TestBed.createComponent(NgxMatErrorWithControlRemoved);
+      fixture.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(fixture);
+
+      const matError = await loader.getHarness(MatErrorHarness);
+      expect(await matError.getText()).toBe('2 3');
+
+      fixture.componentInstance.isControlOneSelected = false;
+      fixture.detectChanges();
+
+      expect(await matError.getText()).toBe('');
     });
   });
 
@@ -166,6 +282,59 @@ describe('NgxMatErrors', () => {
     });
 
     @Component({
+      standalone: true,
+      imports: [...defaultImports, NgIf],
+      providers: [...defaultProviders],
+      template: `
+        <mat-form-field>
+          <mat-label>Label</mat-label>
+          <input matInput [formControl]="control" />
+          <mat-error ngx-mat-errors>
+            <ng-container *ngIf="isCustomMinLength1Visible">
+              <span *ngxMatErrorDef="let error; for: 'minlength'"
+                >minLength 1</span
+              >
+            </ng-container>
+            <ng-container *ngIf="isCustomMinLength2Visible">
+              <span *ngxMatErrorDef="let error; for: 'minlength'"
+                >minLength 2</span
+              >
+            </ng-container>
+          </mat-error>
+        </mat-form-field>
+      `,
+    })
+    class NgxMatErrorsWithErrorDefChange {
+      control = createControl();
+      isCustomMinLength1Visible = false;
+      isCustomMinLength2Visible = false;
+    }
+
+    it('should handle ngxMatErrorDef change', async () => {
+      const fixture = TestBed.createComponent(NgxMatErrorsWithErrorDefChange);
+      fixture.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(fixture);
+
+      const matInput = await loader.getHarness(MatInputHarness);
+      await matInput.blur();
+
+      const matError = await loader.getHarness(MatErrorHarness);
+      expect(await matError.getText()).toBe('2 3');
+
+      fixture.componentInstance.isCustomMinLength2Visible = true;
+      fixture.detectChanges();
+      expect(await matError.getText()).toBe('minLength 2');
+
+      fixture.componentInstance.isCustomMinLength1Visible = true;
+      fixture.detectChanges();
+      expect(await matError.getText()).toBe('minLength 1');
+
+      fixture.componentInstance.isCustomMinLength1Visible = false;
+      fixture.detectChanges();
+      expect(await matError.getText()).toBe('minLength 2');
+    });
+
+    @Component({
       template: `<span *ngxMatErrorDef="let error">{{ error }}</span>`,
       standalone: true,
       imports: [NgxMatErrorsModule],
@@ -179,6 +348,24 @@ describe('NgxMatErrors', () => {
         );
         fixture.detectChanges();
       }).toThrowError(getNgxMatErrorDefMissingForError().message);
+    });
+
+    @Component({
+      template: `<span *ngxMatErrorDef="let error; for: 'minlength'">{{
+        error
+      }}</span>`,
+      standalone: true,
+      imports: [NgxMatErrorsModule],
+    })
+    class NgxMatErrorsWithErrorDefShouldNotThrow {}
+
+    it('should not throw error when for is present', () => {
+      expect(() => {
+        const fixture = TestBed.createComponent(
+          NgxMatErrorsWithErrorDefShouldNotThrow
+        );
+        fixture.detectChanges();
+      }).not.toThrow();
     });
   });
 });
