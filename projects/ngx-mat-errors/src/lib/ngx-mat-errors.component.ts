@@ -20,7 +20,9 @@ import {
 import { Observable, ReplaySubject, combineLatest, merge, of } from 'rxjs';
 import {
   distinctUntilChanged,
+  filter,
   map,
+  pairwise,
   startWith,
   switchMap,
 } from 'rxjs/operators';
@@ -86,7 +88,15 @@ export class NgxMatErrors implements OnDestroy {
           if (!control) {
             return of(null);
           }
-          return merge(control.valueChanges).pipe(
+
+          const fromPendingStates = control.statusChanges.pipe(
+            pairwise(),
+            filter(([previous, current]) => {
+              return previous === 'PENDING' && current !== 'PENDING';
+            })
+          );
+
+          return merge(control.valueChanges, fromPendingStates).pipe(
             startWith(null as any),
             map(() => control.errors)
           );

@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatInput } from '@angular/material/input';
+import { delay, of } from 'rxjs';
 
 @Component({
   selector: 'app-mdc',
@@ -22,9 +23,15 @@ export class MdcComponent {
     Validators.min(10),
     Validators.max(20),
   ]);
+  readonly control3 = new FormControl<string>('', {
+    asyncValidators: [
+      (control) => of(Validators.minLength(3)(control)).pipe(delay(250)),
+    ],
+  });
 
   value1: string | null = null;
   value2: number | null = null;
+  value3: string | null = null;
 
   readonly outerErrorControl = new FormControl<number>(1);
   getMatInput(matInput1: MatInput, matInput2: MatInput) {

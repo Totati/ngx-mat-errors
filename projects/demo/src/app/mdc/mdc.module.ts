@@ -9,6 +9,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { NgxMatErrorDef, NgxMatErrors } from 'ngx-mat-errors';
 import { MdcRoutingModule } from './mdc-routing.module';
 import { MdcComponent } from './mdc.component';
+import { AsyncMinLengthValidator } from '../async-validator.directive';
 
 @NgModule({
   declarations: [MdcComponent],
@@ -23,6 +24,7 @@ import { MdcComponent } from './mdc.component';
     MatRadioModule,
     ReactiveFormsModule,
     FormsModule,
+    AsyncMinLengthValidator
   ],
 })
 export class MdcModule {}
