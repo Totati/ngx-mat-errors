@@ -15,6 +15,7 @@ import {
 } from 'ngx-mat-errors';
 import { LengthError } from './error-messages';
 import { getNgxMatErrorDefMissingForError } from './errors';
+import { delay, firstValueFrom, of } from 'rxjs';
 
 const defaultProviders: Provider[] = [
   {
@@ -366,6 +367,45 @@ describe('NgxMatErrors', () => {
         );
         fixture.detectChanges();
       }).not.toThrow();
+    });
+  });
+
+  describe('with async validator', () => {
+    @Component({
+      standalone: true,
+      imports: [...defaultImports],
+      providers: [...defaultProviders],
+      template: `
+        <mat-form-field>
+          <mat-label>Label</mat-label>
+          <input matInput [formControl]="control" />
+          <mat-error ngx-mat-errors></mat-error>
+        </mat-form-field>
+      `,
+    })
+    class NgxMatErrorWithAsyncValidator {
+      control = new FormControl<string>('', {
+        asyncValidators: [
+          (control) => of(Validators.minLength(3)(control)).pipe(delay(0)),
+        ],
+      });
+    }
+
+    let fixture: ComponentFixture<NgxMatErrorWithAsyncValidator>;
+    beforeEach(() => {
+      fixture = TestBed.createComponent(NgxMatErrorWithAsyncValidator);
+      fixture.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(fixture);
+    });
+
+    it('should display errors from async validators', async () => {
+      const matInput = await loader.getHarness(MatInputHarness);
+      await matInput.blur();
+      await matInput.setValue('a');
+      const matError = await loader.getHarness(MatErrorHarness);
+      expect(await matError.getText()).toBe('1 3');
+      await matInput.setValue('as');
+      expect(await matError.getText()).toBe('2 3');
     });
   });
 });
