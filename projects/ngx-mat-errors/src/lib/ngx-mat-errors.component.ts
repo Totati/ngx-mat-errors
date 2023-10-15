@@ -3,52 +3,36 @@ import {
   ChangeDetectionStrategy,
   Component,
   ContentChildren,
-  Directive,
   InjectionToken,
   Input,
   OnDestroy,
-  OnInit,
-  QueryList,
-  TemplateRef,
   ViewEncapsulation,
   inject,
+  type QueryList,
 } from '@angular/core';
-import {
-  MAT_FORM_FIELD,
-  MatFormFieldControl,
-} from '@angular/material/form-field';
-import { Observable, ReplaySubject, combineLatest, merge, of } from 'rxjs';
+import { ValidationErrors } from '@angular/forms';
+import { MAT_FORM_FIELD } from '@angular/material/form-field';
+import { Observable, ReplaySubject, combineLatest, of } from 'rxjs';
 import {
   distinctUntilChanged,
-  filter,
   map,
-  pairwise,
   startWith,
   switchMap,
 } from 'rxjs/operators';
 import { ErrorMessages } from './error-messages';
-import { getNgxMatErrorDefMissingForError } from './errors';
-import { ErrorTemplate } from './types';
+import {
+  INgxMatErrorDef,
+  NGX_MAT_ERROR_DEF,
+} from './ngx-mat-error-def.directive';
+import { ErrorTemplate, NgxMatErrorControls } from './types';
 import { distinctUntilErrorChanged } from './utils/distinct-until-error-changed';
+import { findCustomErrorForControl } from './utils/find-custom-error-for-control';
+import { getAbstractControls } from './utils/get-abstract-controls';
+import { getControlWithError } from './utils/get-control-with-error';
 
 export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<ErrorMessages>(
   'NGX_MAT_ERROR_DEFAULT_OPTIONS'
 );
-
-@Directive({
-  selector: '[ngxMatErrorDef]',
-  standalone: true,
-})
-export class NgxMatErrorDef implements OnInit {
-  @Input() ngxMatErrorDefFor!: string;
-  public readonly template = inject(TemplateRef);
-
-  ngOnInit() {
-    if (!this.ngxMatErrorDefFor) {
-      throw getNgxMatErrorDefMissingForError();
-    }
-  }
-}
 
 @Component({
   selector: 'ngx-mat-errors, [ngx-mat-errors]',
@@ -70,58 +54,51 @@ export class NgxMatErrorDef implements OnInit {
 export class NgxMatErrors implements OnDestroy {
   private readonly messages = inject(NGX_MAT_ERROR_DEFAULT_OPTIONS);
   private readonly matFormField = inject(MAT_FORM_FIELD, { optional: true });
-  private readonly controlChangedSubject = new ReplaySubject<
-    MatFormFieldControl<any> | '' | null | undefined
-  >(1);
+  private readonly controlChangedSubject =
+    new ReplaySubject<NgxMatErrorControls>(1);
 
   protected error$!: Observable<ErrorTemplate>;
 
   // ContentChildren is set before ngAfterContentInit which is before ngAfterViewInit.
   // Before ngAfterViewInit lifecycle hook we can modify the error$ observable without needing another change detection cycle.
   // This elaborates the need of rxjs defer;
-  @ContentChildren(NgxMatErrorDef, { descendants: true })
-  protected set customErrorMessages(queryList: QueryList<NgxMatErrorDef>) {
-    const errors$ = this.controlChangedSubject.pipe(
-        switchMap((_control) => {
-          const control = (_control || this.matFormField?._control)?.ngControl
-            ?.control;
-          if (!control) {
+  @ContentChildren(NGX_MAT_ERROR_DEF, { descendants: true })
+  protected set customErrorMessages(queryList: QueryList<INgxMatErrorDef>) {
+    const firstControlWithError$ = this.controlChangedSubject.pipe(
+        switchMap((_controls) => {
+          const controls = getAbstractControls(
+            _controls || this.matFormField?._control
+          );
+          if (!controls) {
             return of(null);
           }
-
-          const fromPendingStates = control.statusChanges.pipe(
-            pairwise(),
-            filter(([previous, current]) => {
-              return previous === 'PENDING' && current !== 'PENDING';
-            })
-          );
-
-          return merge(control.valueChanges, fromPendingStates).pipe(
-            startWith(null as any),
-            map(() => control.errors)
-          );
+          return getControlWithError(controls);
         })
       ),
-      customErrorMessage$ = (
-        queryList.changes as Observable<QueryList<NgxMatErrorDef>>
+      customErrorMessages$ = (
+        queryList.changes as Observable<QueryList<INgxMatErrorDef>>
       ).pipe(startWith(queryList));
 
-    this.error$ = combineLatest([errors$, customErrorMessage$]).pipe(
-      map(([errors, customErrorMessage]) => {
-        if (!errors) {
+    this.error$ = combineLatest([
+      firstControlWithError$,
+      customErrorMessages$,
+    ]).pipe(
+      map(([controlWithError, customErrorMessages]) => {
+        if (!controlWithError) {
           return;
         }
+        const errors = controlWithError.errors as ValidationErrors;
         const errorKeys = Object.keys(errors);
         const errorOrErrorDef =
-          customErrorMessage.find((customErrorMessage) =>
-            errorKeys.some(
-              (error) => error === customErrorMessage.ngxMatErrorDefFor
-            )
+          findCustomErrorForControl(
+            errorKeys,
+            customErrorMessages.toArray(),
+            controlWithError
           ) ?? errorKeys.find((key) => key in this.messages);
         if (!errorOrErrorDef) {
           return;
         }
-        if (errorOrErrorDef instanceof NgxMatErrorDef) {
+        if (typeof errorOrErrorDef === 'object') {
           return {
             template: errorOrErrorDef.template,
             $implicit: errors[errorOrErrorDef.ngxMatErrorDefFor],
@@ -141,11 +118,11 @@ export class NgxMatErrors implements OnDestroy {
 
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('ngx-mat-errors')
-  set control(control: MatFormFieldControl<any> | '' | null | undefined) {
+  public set control(control: NgxMatErrorControls) {
     this.controlChangedSubject.next(control);
   }
 
-  ngOnDestroy(): void {
+  public ngOnDestroy(): void {
     this.controlChangedSubject.complete();
   }
 }

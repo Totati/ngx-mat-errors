@@ -3,8 +3,7 @@ import {
   Component,
   ViewEncapsulation,
 } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
-import { MatInput } from '@angular/material/input';
+import { AbstractControl, AbstractControlDirective, FormControl, FormGroup, Validators } from '@angular/forms';
 import { delay, of } from 'rxjs';
 
 @Component({
@@ -29,17 +28,26 @@ export class MdcComponent {
     ],
   });
 
+  readonly dateRange = new FormGroup({
+    start: new FormControl<Date | null>(null, [Validators.required]),
+    end: new FormControl<Date | null>(null, [Validators.required])
+  })
+
+  readonly minDate = new Date();
+
   value1: string | null = null;
   value2: number | null = null;
   value3: string | null = null;
+  value4: Date | null = null;
+  value5: Date | null = null;
 
   readonly outerErrorControl = new FormControl<number>(1);
-  getMatInput(matInput1: MatInput, matInput2: MatInput) {
+  getControl(control1: AbstractControl | AbstractControlDirective, control2: AbstractControl | AbstractControlDirective) {
     switch (this.outerErrorControl.value) {
       case 2:
-        return matInput1;
+        return control1;
       case 3:
-        return matInput2;
+        return control2;
       default:
         return undefined;
     }

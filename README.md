@@ -20,20 +20,35 @@ Install `ngx-mat-errors` in your project:
 npm install ngx-mat-errors
 ```
 
-Import `NgxMatErrorsModule` and provide `NGX_MAT_ERROR_CONFIG_EN` (or your custom error messages) in your `app.module.ts`:
-You can import only `NgxMatErrors` and `NgxMatErrorDef` as they are marked standalone.
+Import `NgxMatErrorsModule` and provide `NGX_MAT_ERROR_CONFIG_EN` (or your custom error messages) in your `app.module.ts`.
 
 ```typescript
 import { NgxMatErrorsModule, NGX_MAT_ERROR_CONFIG_EN } from "ngx-mat-errors";
 
 @NgModule({
-  imports: [...NgxMatErrorsModule],
+  imports: [
+    ...,
+    NgxMatErrorsModule
+  ],
   provide: [NGX_MAT_ERROR_CONFIG_EN],
 })
 export class AppModule {}
 ```
+Or you can import only `NgxMatErrors` and `NgxMatErrorDef` as they are marked standalone.
+```typescript
+import { NgxMatErrors, NgxMatErrorDef, NGX_MAT_ERROR_CONFIG_EN } from "ngx-mat-errors";
 
-Add `ngx-mat-errors` to your `mat-error` in your `mat-form-field`.
+@NgModule({
+  imports: [
+    ...,
+    NgxMatErrors,
+    NgxMatErrorDef
+  ],
+  provide: [NGX_MAT_ERROR_CONFIG_EN],
+})
+```
+
+Add `[ngx-mat-errors]` to your `mat-error` in your `mat-form-field`.
 
 ```html
 <mat-form-field>
@@ -45,21 +60,66 @@ Add `ngx-mat-errors` to your `mat-error` in your `mat-form-field`.
 
 ### Outside a `MatFormField` or override the control
 
-`ngx-mat-errors` can be used as an `@Input()` to override the `MatFormFieldControl`.
+`ngx-mat-errors` can be used as an `@Input()` to assign a control manually.
+
+#### Reactive forms
 
 ```html
 <mat-form-field>
   <mat-label>Label</mat-label>
-  <input
-    type="text"
-    matInput
-    #input="matInput"
-    [formControl]="control1"
-    autocomplete="off"
-  />
+  <input type="text" matInput [formControl]="control" autocomplete="off" />
 </mat-form-field>
-<mat-error [ngx-mat-errors]="input"></mat-error>
+<mat-error [ngx-mat-errors]="control"></mat-error>
 ```
+
+#### Template driven forms
+
+```html
+<mat-form-field>
+  <mat-label>Label</mat-label>
+  <input type="text" matInput #control="ngModel" [(ngModel)]="input" autocomplete="off" />
+</mat-form-field>
+<mat-error [ngx-mat-errors]="control"></mat-error>
+```
+
+### Multiple controls
+
+It can display errors for multiple controls, one at a time. The order of the controls is important, the first control with an error will be displayed.
+
+```html
+<mat-form-field>
+  <mat-label>Label</mat-label>
+  <mat-date-range-input [rangePicker]="dateRangePicker">
+    <input matStartDate [formControl]="startControl" />
+    <input matEndDate [formControl]="endControl" />
+  </mat-date-range-input>
+  <mat-date-range-picker #dateRangePicker></mat-date-range-picker>
+  <mat-error [ngx-mat-errors]="[startControl, endControl]"></mat-error>
+</mat-form-field>
+```
+
+#### `NgxMatErrorsForDateRangePicker` directive
+
+```typescript
+import { NgxMatErrorsForDateRangePicker } from "ngx-mat-errors";
+```
+
+You can use the `[forDateRangePicker]` standalone directive to display errors for the `MatDateRangePicker` component.
+The directive assigns the controls used in the `MatDateRangeInput` to the `NgxMatErrors` component.
+
+```html
+<mat-form-field>
+  <mat-label>Label</mat-label>
+  <mat-date-range-input [rangePicker]="dateRangePicker">
+    <input matStartDate formControlName="start" />
+    <input matEndDate formControlName="end" />
+  </mat-date-range-input>
+  <mat-date-range-picker #dateRangePicker></mat-date-range-picker>
+  <mat-error ngx-mat-errors forDateRangePicker></mat-error>
+</mat-form-field>
+```
+
+You can easily create directives like this to display errors in a `MatFormField` with multiple controls.
 
 ## Customize
 
@@ -106,12 +166,25 @@ You can customize your error messages even more with `*ngxMatErrorDef` directive
   <mat-label>Label</mat-label>
   <input type="text" matInput [formControl]="control1" />
   <mat-error ngx-mat-errors>
-    <span *ngxMatErrorDef="let error; for: 'pattern'">
-      Only digits are allowed, up to 12 digits.
-    </span>
-    <ng-container *ngxMatErrorDef="let error; for: 'min'">
-      The minimum value is {{ error.min }}.
-    </ng-container>
+    <span *ngxMatErrorDef="let error; for: 'pattern'"> Only digits are allowed, up to 12 digits. </span>
+    <ng-container *ngxMatErrorDef="let error; for: 'min'"> The minimum value is {{ error.min }}. </ng-container>
+  </mat-error>
+</mat-form-field>
+```
+
+When used with multiple controls, you can specify the control which the error message is for.
+
+```html
+<mat-form-field>
+  <mat-label>Label</mat-label>
+  <mat-date-range-input [rangePicker]="dateRangePicker">
+    <input matStartDate formControlName="start" />
+    <input matEndDate [formControl]="endControl" />
+  </mat-date-range-input>
+  <mat-date-range-picker #dateRangePicker></mat-date-range-picker>
+  <mat-error ngx-mat-errors forDateRangePicker>
+    <span *ngxMatErrorDef="let error; for: 'required', withControl: 'start'">Start date is required.</span>
+    <span *ngxMatErrorDef="let error; for: 'required', withControl: endControl">End date is required.</span>
   </mat-error>
 </mat-form-field>
 ```
@@ -123,6 +196,8 @@ You can customize your error messages even more with `*ngxMatErrorDef` directive
 
 ### Reactve forms
 
+#### Errors inside of a `MatFormField`
+
 ```html
 <mat-form-field>
   <mat-label>Label</mat-label>
@@ -131,13 +206,63 @@ You can customize your error messages even more with `*ngxMatErrorDef` directive
 </mat-form-field>
 ```
 
+#### Errors outside of a `MatFormField`
+
+```html
+<mat-error [ngx-mat-errors]="control"></mat-error>
+<mat-form-field>
+  <mat-label>Label</mat-label>
+  <input type="text" matInput [formControl]="control" />
+</mat-form-field>
+```
+
+#### Errors for multiple controls
+
+```html
+<mat-form-field>
+  <mat-label>Label</mat-label>
+  <mat-date-range-input [rangePicker]="dateRangePicker">
+    <input matStartDate [formControl]="startControl" />
+    <input matEndDate [formControl]="endControl" />
+  </mat-date-range-input>
+  <mat-date-range-picker #dateRangePicker></mat-date-range-picker>
+  <mat-error [ngx-mat-errors]="[startControl, endControl]"></mat-error>
+</mat-form-field>
+```
+
 ### Template-driven forms
+
+#### Error inside of a `MatFormField`
 
 ```html
 <mat-form-field>
   <mat-label>Label</mat-label>
   <input type="text" matInput [(ngModel)]="value" />
   <mat-error ngx-mat-errors></mat-error>
+</mat-form-field>
+```
+
+#### Errors outside of a `MatFormField`
+
+```html
+<mat-error [ngx-mat-errors]="control"></mat-error>
+<mat-form-field>
+  <mat-label>Label</mat-label>
+  <input type="text" matInput #controls="ngModel" [(ngModel)]="value" />
+</mat-form-field>
+```
+
+#### Errors for multiple controls
+
+```html
+<mat-form-field>
+  <mat-label>Label</mat-label>
+  <mat-date-range-input [rangePicker]="dateRangePicker">
+    <input matStartDate #startControl="ngModel" [(ngModel)]="start" />
+    <input matEndDate #endControl="ngModel" [(ngModel)]="end" />
+  </mat-date-range-input>
+  <mat-date-range-picker #dateRangePicker></mat-date-range-picker>
+  <mat-error [ngx-mat-errors]="[startControl, endControl]"></mat-error>
 </mat-form-field>
 ```
 

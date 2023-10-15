@@ -3,13 +3,15 @@ import { NgModule } from '@angular/core';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
-import { NgxMatErrorDef, NgxMatErrors } from 'ngx-mat-errors';
+import { NgxMatErrorDef, NgxMatErrors, NgxMatErrorsForDateRangePicker } from 'ngx-mat-errors';
+import { AsyncMinLengthValidator } from '../async-validator.directive';
 import { MdcRoutingModule } from './mdc-routing.module';
 import { MdcComponent } from './mdc.component';
-import { AsyncMinLengthValidator } from '../async-validator.directive';
 
 @NgModule({
   declarations: [MdcComponent],
@@ -24,7 +26,10 @@ import { AsyncMinLengthValidator } from '../async-validator.directive';
     MatRadioModule,
     ReactiveFormsModule,
     FormsModule,
-    AsyncMinLengthValidator
+    AsyncMinLengthValidator,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    NgxMatErrorsForDateRangePicker
   ],
 })
 export class MdcModule {}
