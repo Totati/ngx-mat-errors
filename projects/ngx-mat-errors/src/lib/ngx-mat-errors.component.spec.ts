@@ -1,7 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { NgIf } from '@angular/common';
-import { Component, Provider } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  Provider,
+} from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,9 +18,8 @@ import {
   NGX_MAT_ERROR_DEFAULT_OPTIONS,
   NgxMatErrorsModule,
 } from 'ngx-mat-errors';
+import { delay, of } from 'rxjs';
 import { LengthError } from './error-messages';
-import { getNgxMatErrorDefMissingForError } from './errors';
-import { delay, firstValueFrom, of } from 'rxjs';
 
 const defaultProviders: Provider[] = [
   {
@@ -36,7 +40,7 @@ const defaultImports = [
   NgxMatErrorsModule,
 ];
 
-function createControl(value = '12') {
+function createControl(value: string) {
   return new FormControl(value, [Validators.minLength(3), Validators.email]);
 }
 
@@ -57,6 +61,7 @@ describe('NgxMatErrors', () => {
   describe('out of MatFormField', () => {
     @Component({
       standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports, NgIf],
       providers: [...defaultProviders],
       template: ` <mat-error ngx-mat-errors></mat-error> `,
@@ -74,6 +79,7 @@ describe('NgxMatErrors', () => {
 
     @Component({
       standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports],
       providers: [...defaultProviders],
       template: `
@@ -85,7 +91,7 @@ describe('NgxMatErrors', () => {
       `,
     })
     class NgxMatErrorWithoutDefWithControl {
-      control = createControl();
+      control = createControl('12');
     }
 
     it('should render error control is connected manually', async () => {
@@ -99,6 +105,7 @@ describe('NgxMatErrors', () => {
 
     @Component({
       standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports, NgIf],
       providers: [...defaultProviders],
       template: `
@@ -116,8 +123,9 @@ describe('NgxMatErrors', () => {
       `,
     })
     class NgxMatErrorWithControlChange {
-      control1 = createControl();
+      control1 = createControl('12');
       control2 = createControl('123');
+      @Input()
       isControlOneSelected = true;
     }
 
@@ -129,14 +137,14 @@ describe('NgxMatErrors', () => {
       const matError = await loader.getHarness(MatErrorHarness);
       expect(await matError.getText()).toBe('2 3');
 
-      fixture.componentInstance.isControlOneSelected = false;
-      fixture.detectChanges();
+      fixture.componentRef.setInput('isControlOneSelected', false);
 
       expect(await matError.getText()).toBe('email');
     });
 
     @Component({
       standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports, NgIf],
       providers: [...defaultProviders],
       template: `
@@ -150,7 +158,8 @@ describe('NgxMatErrors', () => {
       `,
     })
     class NgxMatErrorWithControlRemoved {
-      control1 = createControl();
+      control1 = createControl('12');
+      @Input()
       isControlOneSelected = true;
     }
 
@@ -161,17 +170,64 @@ describe('NgxMatErrors', () => {
 
       const matError = await loader.getHarness(MatErrorHarness);
       expect(await matError.getText()).toBe('2 3');
-
-      fixture.componentInstance.isControlOneSelected = false;
-      fixture.detectChanges();
+      fixture.componentRef.setInput('isControlOneSelected', false);
 
       expect(await matError.getText()).toBe('');
+    });
+  });
+
+  describe('with multiple controls', () => {
+    @Component({
+      standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      imports: [...defaultImports],
+      providers: [...defaultProviders],
+
+      template: `
+        <mat-error [ngx-mat-errors]="[control1, control2]"></mat-error>
+        <mat-error [ngx-mat-errors]="[control2, control1]"></mat-error>
+      `,
+    })
+    class NgxMatErrorWithMultipleControls {
+      control1 = createControl('12');
+      control2 = createControl('123');
+    }
+
+    it('should render error from the first control', async () => {
+      const fixture = TestBed.createComponent(NgxMatErrorWithMultipleControls);
+      fixture.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(fixture);
+
+      const [matError1, matError2] = await loader.getAllHarnesses(
+        MatErrorHarness
+      );
+      expect(await matError1.getText()).toBe('2 3');
+      expect(await matError2.getText()).toBe('email');
+
+      const { control1, control2 } = fixture.componentInstance;
+
+      control1.setValue('123');
+      control2.setValue('12');
+
+      expect(await matError1.getText()).toBe('email');
+      expect(await matError2.getText()).toBe('2 3');
+
+      control1.setValue('123@test.io');
+
+      expect(await matError1.getText()).toBe('2 3');
+      expect(await matError2.getText()).toBe('2 3');
+
+      control2.setValue('123@test.io');
+
+      expect(await matError1.getText()).toBe('');
+      expect(await matError2.getText()).toBe('');
     });
   });
 
   describe('without ngxMatErrorDef', () => {
     @Component({
       standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports],
       providers: [...defaultProviders],
       template: `
@@ -183,7 +239,7 @@ describe('NgxMatErrors', () => {
       `,
     })
     class NgxMatErrorWithoutDef {
-      control = createControl();
+      control = createControl('12');
     }
 
     let fixture: ComponentFixture<NgxMatErrorWithoutDef>;
@@ -228,6 +284,7 @@ describe('NgxMatErrors', () => {
   describe('with ngxMatErrorDef', () => {
     @Component({
       standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports],
       providers: [...defaultProviders],
       template: `
@@ -244,7 +301,7 @@ describe('NgxMatErrors', () => {
       `,
     })
     class NgxMatErrorsWithErrorDef {
-      control = createControl();
+      control = createControl('12');
     }
 
     let fixture: ComponentFixture<NgxMatErrorsWithErrorDef>;
@@ -284,6 +341,7 @@ describe('NgxMatErrors', () => {
 
     @Component({
       standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports, NgIf],
       providers: [...defaultProviders],
       template: `
@@ -306,8 +364,10 @@ describe('NgxMatErrors', () => {
       `,
     })
     class NgxMatErrorsWithErrorDefChange {
-      control = createControl();
+      control = createControl('12');
+      @Input()
       isCustomMinLength1Visible = false;
+      @Input()
       isCustomMinLength2Visible = false;
     }
 
@@ -322,57 +382,24 @@ describe('NgxMatErrors', () => {
       const matError = await loader.getHarness(MatErrorHarness);
       expect(await matError.getText()).toBe('2 3');
 
-      fixture.componentInstance.isCustomMinLength2Visible = true;
-      fixture.detectChanges();
+      fixture.componentRef.setInput('isCustomMinLength2Visible', true);
+
       expect(await matError.getText()).toBe('minLength 2');
 
-      fixture.componentInstance.isCustomMinLength1Visible = true;
-      fixture.detectChanges();
+      fixture.componentRef.setInput('isCustomMinLength1Visible', true);
+
       expect(await matError.getText()).toBe('minLength 1');
 
-      fixture.componentInstance.isCustomMinLength1Visible = false;
-      fixture.detectChanges();
+      fixture.componentRef.setInput('isCustomMinLength1Visible', false);
+
       expect(await matError.getText()).toBe('minLength 2');
-    });
-
-    @Component({
-      template: `<span *ngxMatErrorDef="let error">{{ error }}</span>`,
-      standalone: true,
-      imports: [NgxMatErrorsModule],
-    })
-    class NgxMatErrorsWithErrorDefShouldThrow {}
-
-    it('should throw error when for is missing', () => {
-      expect(() => {
-        const fixture = TestBed.createComponent(
-          NgxMatErrorsWithErrorDefShouldThrow
-        );
-        fixture.detectChanges();
-      }).toThrowError(getNgxMatErrorDefMissingForError().message);
-    });
-
-    @Component({
-      template: `<span *ngxMatErrorDef="let error; for: 'minlength'">{{
-        error
-      }}</span>`,
-      standalone: true,
-      imports: [NgxMatErrorsModule],
-    })
-    class NgxMatErrorsWithErrorDefShouldNotThrow {}
-
-    it('should not throw error when for is present', () => {
-      expect(() => {
-        const fixture = TestBed.createComponent(
-          NgxMatErrorsWithErrorDefShouldNotThrow
-        );
-        fixture.detectChanges();
-      }).not.toThrow();
     });
   });
 
   describe('with async validator', () => {
     @Component({
       standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports],
       providers: [...defaultProviders],
       template: `

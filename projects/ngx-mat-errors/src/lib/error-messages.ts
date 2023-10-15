@@ -1,26 +1,60 @@
-
 export type ErrorTransform = (error: any) => string;
 
 export interface ErrorMessages {
   [key: string]: string | ErrorTransform;
 }
 
-export interface MinError {
-  min: number;
-  actual: number;
+/**
+ * For errors: 'min', 'matDatepickerMin'
+ */
+export interface MinError<T = number> {
+  min: T;
+  actual: T;
 }
 
-export interface MaxError {
-  max: number;
-  actual: number;
+/**
+ * For errors: 'max', 'matDatepickerMax'
+ */
+export interface MaxError<T = number> {
+  max: T;
+  actual: T;
 }
 
+/**
+ * For errors: 'minlength', 'maxlength'
+ */
 export interface LengthError {
   requiredLength: number;
   actualLength: number;
 }
 
+/**
+ * For errors: 'pattern'
+ */
 export interface PatternValidator {
   requiredPattern: string;
   actualValue: string;
+}
+
+/**
+ * For errors: 'matStartDateInvalid'
+ */
+export interface StartDateError<D> {
+  end: D;
+  actual: D;
+}
+
+/**
+ * For errors: 'matEndDateInvalid'
+ */
+export interface EndDateError<D> {
+  start: D;
+  actual: D;
+}
+
+/**
+ * For errors: 'matDatepickerParse'
+ */
+export interface DatepickerParseError {
+  text: string
 }

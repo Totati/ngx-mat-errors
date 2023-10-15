@@ -17,7 +17,7 @@
       message.
     </p>
     <p>Error message outside of a <code>mat-form-field</code>.
-      <mat-error [ngx-mat-errors]="getMatInput(input1, input2)">
+      <mat-error [ngx-mat-errors]="getControl(control1, control2)">
         <span *ngxMatErrorDef="let error; for: 'pattern'">
           Only digits are allowed, up to 2 digits. Error: {{ error | json }}
         </span>
@@ -25,7 +25,7 @@
     </p>
     <mat-form-field appearance="outline">
       <mat-label>Input 1</mat-label>
-      <input type="text" matInput #input1="matInput" [formControl]="control1" autocomplete="off" />
+      <input type="text" matInput [formControl]="control1" autocomplete="off" />
       <mat-error ngx-mat-errors>
         <span *ngxMatErrorDef="let error; for: 'pattern'">
           Only digits are allowed, up to 2 digits. Error: {{ error | json }}
@@ -36,7 +36,7 @@
     <p>Custom min and max error messages</p>
     <mat-form-field appearance="outline">
       <mat-label>Input 2</mat-label>
-      <input type="number" matInput #input2="matInput" [formControl]="control2" autocomplete="off" />
+      <input type="number" matInput [formControl]="control2" autocomplete="off" />
       <mat-error ngx-mat-errors>
         <ng-container *ngxMatErrorDef="let error; for: 'max'">
           Maximum value is {{ error.max }}. Error: {{ error | json }}
@@ -51,6 +51,21 @@
       <mat-error ngx-mat-errors></mat-error>
       <mat-hint>Minimum length is 3</mat-hint>
     </mat-form-field>
+    <p>Multiple inputs</p>
+    <mat-form-field appearance="outline" [formGroup]="dateRange">
+      <mat-label>Date range picker</mat-label>
+      <mat-date-range-input [rangePicker]="dateRangePicker1" [min]="minDate">
+        <input matStartDate formControlName="start" placeholder="Start date" />
+        <input matEndDate [formControl]="$any(dateRange.get('end'))" placeholder="End date" />
+      </mat-date-range-input>
+      <mat-datepicker-toggle matIconSuffix [for]="dateRangePicker1"></mat-datepicker-toggle>
+      <mat-date-range-picker #dateRangePicker1></mat-date-range-picker>
+      <mat-error ngx-mat-errors forDateRangePicker>
+        <span *ngxMatErrorDef="let error; for: 'required'; withInput: dateRange.get('start')">Start date is
+          required.</span>
+        <span *ngxMatErrorDef="let error; for: 'required'; withInput: 'end'">End date is required.</span>
+      </mat-error>
+    </mat-form-field>
   </mat-card-content>
 </mat-card>
 <mat-card>
@@ -59,7 +74,7 @@
   </mat-card-header>
   <mat-card-content>
     <p>Error message outside of a <code>mat-form-field</code>.</p>
-    <mat-error [ngx-mat-errors]="getMatInput(input3, input4)">
+    <mat-error [ngx-mat-errors]="getControl(input3, input4)">
       <span *ngxMatErrorDef="let error; for: 'pattern'">
         Only digits are allowed, up to 2 digits. Error: {{ error | json }}
       </span>
@@ -70,7 +85,7 @@
     </p>
     <mat-form-field appearance="outline">
       <mat-label>Input 1</mat-label>
-      <input type="text" matInput #input3="matInput" [(ngModel)]="value1" required pattern="[0-9]{0,2}"
+      <input type="text" matInput #input3="ngModel" [(ngModel)]="value1" required pattern="[0-9]{0,2}"
         autocomplete="off" />
       <mat-error ngx-mat-errors>
         <span *ngxMatErrorDef="let error; for: 'pattern'">
@@ -82,7 +97,7 @@
     <p>Custom min and max error messages</p>
     <mat-form-field appearance="outline">
       <mat-label>Input 2</mat-label>
-      <input type="number" matInput #input4="matInput"  min="10" max="20" [(ngModel)]="value2" autocomplete="off" />
+      <input type="number" matInput #input4="ngModel" min="10" max="20" [(ngModel)]="value2" autocomplete="off" />
       <mat-error ngx-mat-errors>
         <ng-container *ngxMatErrorDef="let error; for: 'max'">
           Maximum value is {{ error.max }}. Error: {{ error | json }}
@@ -96,6 +111,19 @@
       <input type="text" matInput [(ngModel)]="value3" [appAsyncMinLengthValidator]="3" autocomplete="off" />
       <mat-error ngx-mat-errors></mat-error>
       <mat-hint>Minimum length is 3</mat-hint>
+    </mat-form-field>
+    <p>Multiple controls</p>
+    <mat-form-field appearance="outline">
+      <mat-label>Date range picker</mat-label>
+      <mat-date-range-input [rangePicker]="dateRangePicker2" [min]="minDate" required>
+        <input matStartDate #startDateModel="ngModel" [(ngModel)]="value4" required placeholder="Start date" />
+        <input matEndDate #endDateModel="ngModel" [(ngModel)]="value5" required placeholder="End date" />
+      </mat-date-range-input>
+      <mat-datepicker-toggle matIconSuffix [for]="dateRangePicker2"></mat-datepicker-toggle>
+      <mat-date-range-picker #dateRangePicker2></mat-date-range-picker>
+      <mat-error [ngx-mat-errors]="[startDateModel, endDateModel]">
+        <span *ngxMatErrorDef="let error; for: 'required'; withInput: endDateModel">End date is required.</span>
+      </mat-error>
     </mat-form-field>
   </mat-card-content>
 </mat-card>
