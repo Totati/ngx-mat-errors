@@ -56,5 +56,5 @@ export interface EndDateError<D> {
  * For errors: 'matDatepickerParse'
  */
 export interface DatepickerParseError {
-  text: string
+  text: string;
 }

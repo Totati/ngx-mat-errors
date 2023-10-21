@@ -7,7 +7,12 @@ import {
   Input,
   Provider,
 } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatErrorHarness } from '@angular/material/form-field/testing';
@@ -15,10 +20,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import {
+  ErrorMessages,
   NGX_MAT_ERROR_DEFAULT_OPTIONS,
   NgxMatErrorsModule,
 } from 'ngx-mat-errors';
-import { delay, of } from 'rxjs';
+import { delay, from, interval, map, of, take, zip } from 'rxjs';
 import { LengthError } from './error-messages';
 
 const defaultProviders: Provider[] = [
@@ -64,7 +70,7 @@ describe('NgxMatErrors', () => {
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports, NgIf],
       providers: [...defaultProviders],
-      template: ` <mat-error ngx-mat-errors></mat-error> `,
+      template: `<mat-error ngx-mat-errors></mat-error>`,
     })
     class NgxMatErrorWithoutControl {}
 
@@ -182,7 +188,6 @@ describe('NgxMatErrors', () => {
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports],
       providers: [...defaultProviders],
-
       template: `
         <mat-error [ngx-mat-errors]="[control1, control2]"></mat-error>
         <mat-error [ngx-mat-errors]="[control2, control1]"></mat-error>
@@ -434,5 +439,50 @@ describe('NgxMatErrors', () => {
       await matInput.setValue('as');
       expect(await matError.getText()).toBe('2 3');
     });
+  });
+
+  describe('with observable messages', () => {
+    @Component({
+      standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      imports: [...defaultImports],
+      providers: [
+        {
+          provide: NGX_MAT_ERROR_DEFAULT_OPTIONS,
+          useValue: zip(
+            from([
+              {
+                minlength: 'minlength1',
+              },
+              {
+                minlength: 'minlength2',
+              },
+            ] as ErrorMessages[]),
+            interval(1)
+          ).pipe(
+            take(2),
+            map(([v]) => v)
+          ),
+        },
+      ],
+      template: `<mat-error [ngx-mat-errors]="control"></mat-error>`,
+    })
+    class NgxMatErrorWithObservableMessages {
+      control = createControl('12');
+    }
+
+    it('should change message when new messages enter the stream', fakeAsync(async () => {
+      const fixture = TestBed.createComponent(
+        NgxMatErrorWithObservableMessages
+      );
+      fixture.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(fixture);
+      const matError = await loader.getHarness(MatErrorHarness);
+      expect(await matError.getText()).toBe('');
+      tick(1);
+      expect(await matError.getText()).toBe('minlength1');
+      tick(1);
+      expect(await matError.getText()).toBe('minlength2');
+    }));
   });
 });
