@@ -34,7 +34,9 @@ import { NgxMatErrorsModule, NGX_MAT_ERROR_CONFIG_EN } from "ngx-mat-errors";
 })
 export class AppModule {}
 ```
+
 Or you can import only `NgxMatErrors` and `NgxMatErrorDef` as they are marked standalone.
+
 ```typescript
 import { NgxMatErrors, NgxMatErrorDef, NGX_MAT_ERROR_CONFIG_EN } from "ngx-mat-errors";
 
@@ -139,15 +141,46 @@ import {
 import { FactoryProvider, LOCALE_ID } from '@angular/core';
 
 export const NGX_MAT_ERROR_DEFAULT_CONFIG: FactoryProvider = {
-  useFactory: (locale: string) => {
-    return {
-      ...errorMessagesEnFactory(locale),
-      min: (error: MinError) =>
-        `Min value is ${error.min}, actual is ${error.actual}`,
-    };
-  },
+  useFactory: (locale: string) => ({
+    ...errorMessagesEnFactory(locale),
+    min: (error: MinError) =>
+      `Min value is ${error.min}, actual is ${error.actual}`,
+  }),
   provide: NGX_MAT_ERROR_DEFAULT_OPTIONS,
   deps: [LOCALE_ID],
+};
+
+@NgModule({
+  ...
+  providers: [NGX_MAT_ERROR_DEFAULT_CONFIG],
+})
+export class AppModule {}
+```
+
+You can provide an `Observable<ErrorMessages>` too, which allows changes of error messages. This comes handy when your app supports JIT localization with libraries like `@ngx-translate`.
+
+```
+import {
+  NGX_MAT_ERROR_DEFAULT_OPTIONS
+} from 'ngx-mat-errors';
+import { FactoryProvider, LOCALE_ID } from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
+
+export const NGX_MAT_ERROR_DEFAULT_CONFIG: FactoryProvider = {
+  useFactory: (
+    locale: string,
+    translateService: TranslateService
+  ): Observable<ErrorMessages> => translateService.onLangChange.pipe(
+    startWith(null),
+    map(() => ({
+      required: translateService.instant('core.validations.required'),
+      minlength: (error: MinError) => translateService.instant('core.validations.minlength', error),
+      ...
+    }))
+  ),
+  provide: NGX_MAT_ERROR_DEFAULT_OPTIONS,
+  deps: [LOCALE_ID, TranslateService],
 };
 
 @NgModule({
@@ -191,8 +224,8 @@ When used with multiple controls, you can specify the control which the error me
 
 ## Compatibility
 
-- `@angular/core`: `^16.0.0`,
-- `@angular/material`: `^16.0.0`,
+- `@angular/core`: `^16.0.0 || ^17.0.0`,
+- `@angular/material`: `^16.0.0 || ^17.0.0`,
 
 ### Reactve forms
 
