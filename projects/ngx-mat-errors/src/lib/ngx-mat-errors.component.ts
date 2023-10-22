@@ -25,14 +25,15 @@ import {
   NGX_MAT_ERROR_DEF,
 } from './ngx-mat-error-def.directive';
 import { ErrorTemplate, NgxMatErrorControls } from './types';
+import { coerceToObservable } from './utils/coerce-to-observable';
 import { distinctUntilErrorChanged } from './utils/distinct-until-error-changed';
 import { findCustomErrorForControl } from './utils/find-custom-error-for-control';
 import { getAbstractControls } from './utils/get-abstract-controls';
 import { getControlWithError } from './utils/get-control-with-error';
 
-export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<ErrorMessages>(
-  'NGX_MAT_ERROR_DEFAULT_OPTIONS'
-);
+export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<
+  ErrorMessages | Observable<ErrorMessages>
+>('NGX_MAT_ERROR_DEFAULT_OPTIONS');
 
 @Component({
   selector: 'ngx-mat-errors, [ngx-mat-errors]',
@@ -52,7 +53,9 @@ export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<ErrorMessages>(
   },
 })
 export class NgxMatErrors implements OnDestroy {
-  private readonly messages = inject(NGX_MAT_ERROR_DEFAULT_OPTIONS);
+  private readonly messages$ = coerceToObservable(
+    inject(NGX_MAT_ERROR_DEFAULT_OPTIONS)
+  );
   private readonly matFormField = inject(MAT_FORM_FIELD, { optional: true });
   private readonly controlChangedSubject =
     new ReplaySubject<NgxMatErrorControls>(1);
@@ -78,12 +81,12 @@ export class NgxMatErrors implements OnDestroy {
       customErrorMessages$ = (
         queryList.changes as Observable<QueryList<INgxMatErrorDef>>
       ).pipe(startWith(queryList));
-
     this.error$ = combineLatest([
       firstControlWithError$,
       customErrorMessages$,
+      this.messages$,
     ]).pipe(
-      map(([controlWithError, customErrorMessages]) => {
+      map(([controlWithError, customErrorMessages, messages]) => {
         if (!controlWithError) {
           return;
         }
@@ -94,7 +97,7 @@ export class NgxMatErrors implements OnDestroy {
             errorKeys,
             customErrorMessages.toArray(),
             controlWithError
-          ) ?? errorKeys.find((key) => key in this.messages);
+          ) ?? errorKeys.find((key) => key in messages);
         if (!errorOrErrorDef) {
           return;
         }
@@ -104,7 +107,7 @@ export class NgxMatErrors implements OnDestroy {
             $implicit: errors[errorOrErrorDef.ngxMatErrorDefFor],
           };
         }
-        const message = this.messages[errorOrErrorDef];
+        const message = messages[errorOrErrorDef];
         return {
           $implicit:
             typeof message === 'function'
