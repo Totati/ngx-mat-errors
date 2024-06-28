@@ -1,12 +1,15 @@
 import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { bootstrapApplication } from '@angular/platform-browser';
 
-import { AppModule } from './app/app.module';
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { AppComponent } from './app/app.component';
 import { environment } from './environments/environment';
+import { NGX_MAT_ERROR_CONFIG_EN } from 'ngx-mat-errors';
 
 if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+bootstrapApplication(AppComponent, {
+  providers: [provideAnimations(), NGX_MAT_ERROR_CONFIG_EN],
+}).catch((err) => console.error(err));
