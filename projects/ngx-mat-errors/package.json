@@ -1,14 +1,14 @@
 {
   "name": "ngx-mat-errors",
-  "version": "17.0.0",
+  "version": "17.1.0",
   "author": {
     "name": "Totati",
     "url": "https://twitter.com/48Aca"
   },
   "peerDependencies": {
-    "@angular/common": "^17.0.0",
-    "@angular/core": "^17.0.0",
-    "@angular/material": "^17.0.0"
+    "@angular/common": "^17.0.0 || ^18.0.0",
+    "@angular/core": "^17.0.0 || ^18.0.0",
+    "@angular/material": "^17.0.0 || ^18.0.0"
   },
   "license": "MIT",
   "repository": {
