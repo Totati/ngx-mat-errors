@@ -1,49 +1,14 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  ViewChild
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { getNgxMatErrorDefMissingForError } from './errors';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { NgxMatErrorDef } from './ngx-mat-error-def.directive';
 
 describe('NgxMatErrorDef', () => {
-  describe('for', () => {
-    @Component({
-      template: `<span *ngxMatErrorDef="let error"></span>`,
-      standalone: true,
-      changeDetection: ChangeDetectionStrategy.OnPush,
-      imports: [NgxMatErrorDef],
-    })
-    class NgxMatErrorsWithErrorDefShouldThrow {}
-
-    it('should throw error when for is missing', () => {
-      expect(() => {
-        const fixture = TestBed.createComponent(
-          NgxMatErrorsWithErrorDefShouldThrow
-        );
-        fixture.detectChanges();
-      }).toThrowError(getNgxMatErrorDefMissingForError().message);
-    });
-
-    @Component({
-      template: `<span *ngxMatErrorDef="let error; for: 'minlength'"></span>`,
-      standalone: true,
-      changeDetection: ChangeDetectionStrategy.OnPush,
-      imports: [NgxMatErrorDef],
-    })
-    class NgxMatErrorsWithErrorDefShouldNotThrow {}
-
-    it('should not throw error when for is present', () => {
-      expect(() => {
-        const fixture = TestBed.createComponent(
-          NgxMatErrorsWithErrorDefShouldNotThrow
-        );
-        fixture.detectChanges();
-      }).not.toThrow();
-    });
-  });
   describe('withControl', () => {
     @Component({
       template: `<form [formGroup]="fg">

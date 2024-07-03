@@ -2,7 +2,6 @@ import {
   Directive,
   InjectionToken,
   Input,
-  OnInit,
   TemplateRef,
   inject,
 } from '@angular/core';
@@ -11,7 +10,6 @@ import {
   ControlContainer,
   type AbstractControlDirective,
 } from '@angular/forms';
-import { getNgxMatErrorDefMissingForError } from './errors';
 
 export interface INgxMatErrorDef {
   ngxMatErrorDefFor: string;
@@ -38,13 +36,16 @@ export const NGX_MAT_ERROR_DEF = new InjectionToken<INgxMatErrorDef>(
     },
   ],
 })
-export class NgxMatErrorDef implements INgxMatErrorDef, OnInit {
+export class NgxMatErrorDef implements INgxMatErrorDef {
   /**
    * Specify the error key to be used for error matching.
    * @required
    */
-  @Input()
+  @Input({
+    required: true,
+  })
   public ngxMatErrorDefFor!: string;
+
   /**
    * Specify the control to be used for error matching.
    * @optional
@@ -70,11 +71,5 @@ export class NgxMatErrorDef implements INgxMatErrorDef, OnInit {
       return input;
     }
     return input?.control ?? undefined;
-  }
-
-  public ngOnInit() {
-    if (!this.ngxMatErrorDefFor) {
-      throw getNgxMatErrorDefMissingForError();
-    }
   }
 }
