@@ -165,8 +165,7 @@ import {
 } from 'ngx-mat-errors';
 import { FactoryProvider, LOCALE_ID } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { startWith, map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, startWith, map } from 'rxjs';
 
 export const NGX_MAT_ERROR_DEFAULT_CONFIG: FactoryProvider = {
   useFactory: (
@@ -225,8 +224,8 @@ When used with multiple controls, you can specify the control for which the erro
 
 ## Compatibility
 
-- `@angular/core`: `^17.0.0  || ^18.0.0`
-- `@angular/material`: `^17.0.0 || ^18.0.0`
+- `@angular/core`: `^18.0.0`
+- `@angular/material`: `^18.0.0`
 
 ### Reactive Forms
 
