@@ -24,7 +24,7 @@ import {
   NgxMatErrorDef,
   NgxMatErrorsForDateRangePicker,
 } from 'ngx-mat-errors';
-import { AsyncMinLengthValidator } from './async-validator.directive';
+import { AsyncMinLengthValidator } from './async-min-length-validator.directive';
 import { of, delay } from 'rxjs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
