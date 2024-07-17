@@ -5,7 +5,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  Provider,
+  type Provider,
 } from '@angular/core';
 import {
   ComponentFixture,
@@ -20,12 +20,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import {
-  ErrorMessages,
+  type ErrorMessages,
   NGX_MAT_ERROR_DEFAULT_OPTIONS,
   NgxMatErrorsModule,
 } from 'ngx-mat-errors';
 import { delay, from, interval, map, of, take, zip } from 'rxjs';
-import { LengthError } from './error-messages';
+import type { LengthError } from './types';
 
 const defaultProviders: Provider[] = [
   {

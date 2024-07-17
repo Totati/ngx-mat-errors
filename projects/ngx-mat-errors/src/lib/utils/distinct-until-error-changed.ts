@@ -1,4 +1,4 @@
-import { ErrorTemplate } from '../types';
+import type { ErrorTemplate } from '../types';
 
 export function distinctUntilErrorChanged<P extends ErrorTemplate>(
   prev: P,

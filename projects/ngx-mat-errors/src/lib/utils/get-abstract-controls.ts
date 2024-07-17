@@ -1,6 +1,6 @@
 import { coerceArray } from '@angular/cdk/coercion';
 import { AbstractControl, AbstractControlDirective } from '@angular/forms';
-import { NgxMatErrorControls } from '../types';
+import type { NgxMatErrorControls } from '../types';
 
 export function getAbstractControls(
   controls: NgxMatErrorControls

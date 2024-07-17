@@ -5,26 +5,32 @@ import {
   ContentChildren,
   InjectionToken,
   Input,
-  OnDestroy,
   ViewEncapsulation,
   inject,
+  type OnDestroy,
   type QueryList,
 } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 import { MAT_FORM_FIELD } from '@angular/material/form-field';
-import { Observable, ReplaySubject, combineLatest, of } from 'rxjs';
 import {
+  ReplaySubject,
+  combineLatest,
   distinctUntilChanged,
   map,
+  of,
   startWith,
   switchMap,
-} from 'rxjs/operators';
-import { ErrorMessages } from './error-messages';
+  type Observable,
+} from 'rxjs';
 import {
-  INgxMatErrorDef,
   NGX_MAT_ERROR_DEF,
+  type INgxMatErrorDef,
 } from './ngx-mat-error-def.directive';
-import { ErrorTemplate, NgxMatErrorControls } from './types';
+import type {
+  ErrorMessages,
+  ErrorTemplate,
+  NgxMatErrorControls,
+} from './types';
 import { coerceToObservable } from './utils/coerce-to-observable';
 import { distinctUntilErrorChanged } from './utils/distinct-until-error-changed';
 import { findCustomErrorForControl } from './utils/find-custom-error-for-control';
