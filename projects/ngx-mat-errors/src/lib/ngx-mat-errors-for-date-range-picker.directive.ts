@@ -1,5 +1,5 @@
-import { AfterContentInit, Directive, inject } from '@angular/core';
-import { MatDateRangeInput } from '@angular/material/datepicker';
+import { type AfterContentInit, Directive, inject } from '@angular/core';
+import type { MatDateRangeInput } from '@angular/material/datepicker';
 import { MAT_FORM_FIELD } from '@angular/material/form-field';
 import { NgxMatErrors } from './ngx-mat-errors.component';
 

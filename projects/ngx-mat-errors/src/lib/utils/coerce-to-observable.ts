@@ -1,5 +1,5 @@
-import { Observable, isObservable, of,  } from 'rxjs';
-import type { ErrorMessages } from '../error-messages';
+import { type Observable, isObservable, of,  } from 'rxjs';
+import type { ErrorMessages } from '../types';
 
 export function coerceToObservable(
   errorMessages: ErrorMessages | Observable<ErrorMessages>

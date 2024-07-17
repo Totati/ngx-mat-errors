@@ -1,6 +1,6 @@
 import { formatDate } from '@angular/common';
-import { FactoryProvider, LOCALE_ID } from '@angular/core';
-import {
+import { type FactoryProvider, LOCALE_ID } from '@angular/core';
+import type {
   DatepickerParseError,
   EndDateError,
   ErrorMessages,
@@ -8,7 +8,7 @@ import {
   MaxError,
   MinError,
   StartDateError,
-} from '../error-messages';
+} from '../types';
 import { NGX_MAT_ERROR_DEFAULT_OPTIONS } from '../ngx-mat-errors.component';
 
 export function errorMessagesHuFactory(

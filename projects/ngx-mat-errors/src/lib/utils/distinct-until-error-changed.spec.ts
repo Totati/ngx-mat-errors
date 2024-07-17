@@ -1,6 +1,5 @@
-import { TemplateRef } from '@angular/core';
-import { MaxError, MinError } from '../error-messages';
-import { ErrorTemplate } from '../types';
+import type { TemplateRef } from '@angular/core';
+import type { MaxError, MinError, ErrorTemplate } from '../types';
 import { distinctUntilErrorChanged } from './distinct-until-error-changed';
 
 describe('distinctUntilErrorChanged', () => {
