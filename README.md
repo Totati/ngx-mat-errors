@@ -10,7 +10,7 @@ NgxMatErrors provides an easy yet flexible solution for displaying error message
 
 ## Try It
 
-See it in action on [StackBlitz](https://stackblitz.com/edit/ngx-mat-errors-angular-17?file=src%2Fapp%2Fapp.component.html).
+See it in action on [StackBlitz](https://stackblitz.com/edit/ngx-mat-errors-angular-18?file=src%2Fapp%2Fapp.component.html).
 
 ## How to Use It
 
