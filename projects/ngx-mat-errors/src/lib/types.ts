@@ -17,16 +17,18 @@ export type ErrorTemplate =
     }
   | undefined;
 
+export type FormFieldControl = Pick<MatFormFieldControl<any>, 'ngControl'>;
+
 export type NgxMatErrorControls =
-  | MatFormFieldControl<any>
+  | FormFieldControl
   | AbstractControl
   | AbstractControlDirective
-  | (AbstractControl | AbstractControlDirective)[]
+  | (FormFieldControl | AbstractControl | AbstractControlDirective)[]
   | undefined
   | null
   | '';
 
-  export type ErrorTransform = (error: any) => string;
+export type ErrorTransform = (error: any) => string;
 
 export interface ErrorMessages {
   [key: string]: string | ErrorTransform;

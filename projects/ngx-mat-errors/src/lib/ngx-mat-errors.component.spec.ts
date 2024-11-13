@@ -2,9 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { NgIf } from '@angular/common';
 import {
+  AfterContentInit,
   ChangeDetectionStrategy,
   Component,
+  Directive,
   Input,
+  inject,
   type Provider,
 } from '@angular/core';
 import {
@@ -20,11 +23,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import {
-  type ErrorMessages,
   NGX_MAT_ERROR_DEFAULT_OPTIONS,
+  NgxMatErrors,
   NgxMatErrorsModule,
+  type ErrorMessages,
 } from 'ngx-mat-errors';
-import { delay, from, interval, map, of, take, zip } from 'rxjs';
+import { delay, from, interval, map, of, take, tap, zip } from 'rxjs';
 import type { LengthError } from './types';
 
 const defaultProviders: Provider[] = [
@@ -144,6 +148,7 @@ describe('NgxMatErrors', () => {
       expect(await matError.getText()).toBe('2 3');
 
       fixture.componentRef.setInput('isControlOneSelected', false);
+      fixture.detectChanges();
 
       expect(await matError.getText()).toBe('email');
     });
@@ -177,6 +182,7 @@ describe('NgxMatErrors', () => {
       const matError = await loader.getHarness(MatErrorHarness);
       expect(await matError.getText()).toBe('2 3');
       fixture.componentRef.setInput('isControlOneSelected', false);
+      fixture.detectChanges();
 
       expect(await matError.getText()).toBe('');
     });
@@ -388,14 +394,17 @@ describe('NgxMatErrors', () => {
       expect(await matError.getText()).toBe('2 3');
 
       fixture.componentRef.setInput('isCustomMinLength2Visible', true);
+      fixture.detectChanges();
 
       expect(await matError.getText()).toBe('minLength 2');
 
       fixture.componentRef.setInput('isCustomMinLength1Visible', true);
+      fixture.detectChanges();
 
       expect(await matError.getText()).toBe('minLength 1');
 
       fixture.componentRef.setInput('isCustomMinLength1Visible', false);
+      fixture.detectChanges();
 
       expect(await matError.getText()).toBe('minLength 2');
     });
@@ -418,27 +427,32 @@ describe('NgxMatErrors', () => {
     class NgxMatErrorWithAsyncValidator {
       control = new FormControl<string>('', {
         asyncValidators: [
-          (control) => of(Validators.minLength(3)(control)).pipe(delay(0)),
+          (control) =>
+            of(Validators.minLength(3)(control)).pipe(
+              delay(0),
+              tap(console.log)
+            ),
         ],
       });
     }
 
-    let fixture: ComponentFixture<NgxMatErrorWithAsyncValidator>;
-    beforeEach(() => {
-      fixture = TestBed.createComponent(NgxMatErrorWithAsyncValidator);
+    it('should display errors of async validators', fakeAsync(async () => {
+      const fixture = TestBed.createComponent(NgxMatErrorWithAsyncValidator);
       fixture.detectChanges();
       loader = TestbedHarnessEnvironment.loader(fixture);
-    });
-
-    it('should display errors from async validators', async () => {
       const matInput = await loader.getHarness(MatInputHarness);
       await matInput.blur();
       await matInput.setValue('a');
+      tick(1);
+      fixture.detectChanges();
+      await fixture.whenRenderingDone();
       const matError = await loader.getHarness(MatErrorHarness);
       expect(await matError.getText()).toBe('1 3');
       await matInput.setValue('as');
+      tick(1);
+      fixture.detectChanges();
       expect(await matError.getText()).toBe('2 3');
-    });
+    }));
   });
 
   describe('with observable messages', () => {
@@ -484,5 +498,41 @@ describe('NgxMatErrors', () => {
       tick(1);
       expect(await matError.getText()).toBe('minlength2');
     }));
+  });
+
+  describe('with deprecated control change', () => {
+    @Directive({
+      // eslint-disable-next-line @angular-eslint/directive-selector
+      selector: '[ngx-mat-errors][forTest]',
+      standalone: true,
+    })
+    class NgxMatErrorsForTest implements AfterContentInit {
+      private readonly ngxMatErrors = inject(NgxMatErrors);
+      public ngAfterContentInit() {
+        // Remove this whole describe block when the deprecated API is removed.
+        this.ngxMatErrors.control = new FormControl(null, [
+          Validators.required,
+        ]);
+      }
+    }
+    @Component({
+      standalone: true,
+      changeDetection: ChangeDetectionStrategy.OnPush,
+      imports: [...defaultImports, NgxMatErrorsForTest],
+      providers: [...defaultProviders],
+      template: `<mat-error ngx-mat-errors forTest></mat-error>`,
+    })
+    class NgxMatErrorWithDeprecatedControlSetting {}
+
+    it('should be possible to set the control manually through deprecated API', async () => {
+      const fixture = TestBed.createComponent(
+        NgxMatErrorWithDeprecatedControlSetting
+      );
+      fixture.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(fixture);
+      const matError = await loader.getHarness(MatErrorHarness);
+
+      expect(await matError.getText()).toBe('required');
+    });
   });
 });
