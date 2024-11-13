@@ -22,6 +22,9 @@ export interface INgxMatErrorDef {
   control?: AbstractControl;
 }
 
+/**
+ * Lightweight injection token. When NgxMatErrorDef is not used, only this token will remain, the directive will be tree-shaken.
+ */
 export const NGX_MAT_ERROR_DEF = new InjectionToken<INgxMatErrorDef>(
   'NGX_MAT_ERROR_DEF'
 );

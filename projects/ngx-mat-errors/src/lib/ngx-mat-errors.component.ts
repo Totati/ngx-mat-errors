@@ -10,8 +10,6 @@ import {
   type OnDestroy,
   type QueryList,
 } from '@angular/core';
-import { ValidationErrors } from '@angular/forms';
-import { MAT_FORM_FIELD } from '@angular/material/form-field';
 import {
   ReplaySubject,
   combineLatest,
@@ -22,6 +20,7 @@ import {
   switchMap,
   type Observable,
 } from 'rxjs';
+import { NgxMatErrorControl } from './ngx-mat-error-control';
 import {
   NGX_MAT_ERROR_DEF,
   type INgxMatErrorDef,
@@ -33,7 +32,7 @@ import type {
 } from './types';
 import { coerceToObservable } from './utils/coerce-to-observable';
 import { distinctUntilErrorChanged } from './utils/distinct-until-error-changed';
-import { findCustomErrorForControl } from './utils/find-custom-error-for-control';
+import { findCustomErrorForControl as findErrorForControl } from './utils/find-error-for-control';
 import { getAbstractControls } from './utils/get-abstract-controls';
 import { getControlWithError } from './utils/get-control-with-error';
 
@@ -57,12 +56,20 @@ export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<
   host: {
     class: 'ngx-mat-errors',
   },
+  providers: [
+    {
+      provide: NgxMatErrorControl,
+      useClass: NgxMatErrorControl,
+    },
+  ],
 })
 export class NgxMatErrors implements OnDestroy {
   private readonly messages$ = coerceToObservable(
     inject(NGX_MAT_ERROR_DEFAULT_OPTIONS)
   );
-  private readonly matFormField = inject(MAT_FORM_FIELD, { optional: true });
+  private readonly defaultControl = inject(NgxMatErrorControl, {
+    host: true,
+  });
   private readonly controlChangedSubject =
     new ReplaySubject<NgxMatErrorControls>(1);
 
@@ -76,7 +83,7 @@ export class NgxMatErrors implements OnDestroy {
     const firstControlWithError$ = this.controlChangedSubject.pipe(
         switchMap((_controls) => {
           const controls = getAbstractControls(
-            _controls || this.matFormField?._control
+            _controls || this.defaultControl.get()
           );
           if (!controls) {
             return of(null);
@@ -96,14 +103,12 @@ export class NgxMatErrors implements OnDestroy {
         if (!controlWithError) {
           return;
         }
-        const errors = controlWithError.errors as ValidationErrors;
-        const errorKeys = Object.keys(errors);
-        const errorOrErrorDef =
-          findCustomErrorForControl(
-            errorKeys,
-            customErrorMessages.toArray(),
-            controlWithError
-          ) ?? errorKeys.find((key) => key in messages);
+        const errors = controlWithError.errors!,
+          errorOrErrorDef = findErrorForControl(
+            controlWithError,
+            messages,
+            customErrorMessages.toArray()
+          );
         if (!errorOrErrorDef) {
           return;
         }
@@ -126,11 +131,17 @@ export class NgxMatErrors implements OnDestroy {
   }
 
   // eslint-disable-next-line @angular-eslint/no-input-rename
+  /**
+   * @deprecated will be changed to a signal and it won't be possible to set the property from TS.
+   * Instead of setting it in a directive, the directive should extend the {@link NgxMatErrorControl } class
+   * and provide itself as it.
+   */
   @Input('ngx-mat-errors')
   public set control(control: NgxMatErrorControls) {
     this.controlChangedSubject.next(control);
   }
 
+  /** @ignore */
   public ngOnDestroy(): void {
     this.controlChangedSubject.complete();
   }

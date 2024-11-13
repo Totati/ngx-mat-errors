@@ -1,7 +1,6 @@
-import { type AfterContentInit, Directive, inject } from '@angular/core';
+import { Directive } from '@angular/core';
 import type { MatDateRangeInput } from '@angular/material/datepicker';
-import { MAT_FORM_FIELD } from '@angular/material/form-field';
-import { NgxMatErrors } from './ngx-mat-errors.component';
+import { NgxMatErrorControl } from './ngx-mat-error-control';
 
 @Directive({
   // eslint-disable-next-line @angular-eslint/directive-selector
@@ -10,15 +9,18 @@ import { NgxMatErrors } from './ngx-mat-errors.component';
   host: {
     class: 'ngx-mat-errors-for-date-range-picker',
   },
+  providers: [
+    {
+      provide: NgxMatErrorControl,
+      useExisting: NgxMatErrorsForDateRangePicker,
+    },
+  ],
 })
-export class NgxMatErrorsForDateRangePicker<D> implements AfterContentInit {
-  private readonly ngxMatErrors = inject(NgxMatErrors);
-  private readonly matFormField = inject(MAT_FORM_FIELD);
-  public ngAfterContentInit() {
-    const control = this.matFormField._control as MatDateRangeInput<D>;
-    this.ngxMatErrors.control = [
-      control._startInput.ngControl,
-      control._endInput.ngControl,
-    ];
+export class NgxMatErrorsForDateRangePicker<D> extends NgxMatErrorControl {
+  /** Returns start and end controls of the date range picker. */
+  public override get() {
+    const { _startInput, _endInput } = this.matFormField!
+      ._control as MatDateRangeInput<D>;
+    return [_startInput, _endInput];
   }
 }
