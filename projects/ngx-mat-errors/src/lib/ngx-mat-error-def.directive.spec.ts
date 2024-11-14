@@ -16,7 +16,6 @@ describe('NgxMatErrorDef', () => {
           *ngxMatErrorDef="let error; for: 'minlength'; withControl: 'input'"
         ></span>
       </form>`,
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [NgxMatErrorDef, ReactiveFormsModule],
     })
@@ -47,7 +46,6 @@ describe('NgxMatErrorDef', () => {
             withControl: inputControl
           "
         ></span>`,
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [NgxMatErrorDef, FormsModule],
     })

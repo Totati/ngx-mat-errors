@@ -54,7 +54,6 @@ export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<
     </ng-template>`,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  standalone: true,
   imports: [NgIf, AsyncPipe, NgTemplateOutlet],
   host: {
     class: 'ngx-mat-errors',

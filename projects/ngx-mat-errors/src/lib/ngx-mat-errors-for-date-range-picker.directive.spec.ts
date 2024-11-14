@@ -32,12 +32,15 @@ describe('NgxMatErrorsForDateRangePicker', () => {
         </mat-date-range-input>
         <mat-date-range-picker #dateRangePicker></mat-date-range-picker>
         <mat-error ngx-mat-errors forDateRangePicker>
-          <span *ngxMatErrorDef="let error; for: 'required', withControl: start">start</span>
-          <span *ngxMatErrorDef="let error; for: 'required', withControl: end">end</span>
+          <span *ngxMatErrorDef="let error; for: 'required'; withControl: start"
+            >start</span
+          >
+          <span *ngxMatErrorDef="let error; for: 'required'; withControl: end"
+            >end</span
+          >
         </mat-error>
       </mat-form-field>
     `,
-    standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
       NgxMatErrors,
@@ -52,7 +55,7 @@ describe('NgxMatErrorsForDateRangePicker', () => {
     providers: [
       {
         provide: NGX_MAT_ERROR_DEFAULT_OPTIONS,
-        useValue: { },
+        useValue: {},
       },
     ],
   })

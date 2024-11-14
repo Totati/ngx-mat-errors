@@ -5,12 +5,12 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import {
-  ReactiveFormsModule,
-  FormsModule,
   AbstractControl,
   AbstractControlDirective,
   FormControl,
   FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
@@ -19,14 +19,14 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import {
-  NgxMatErrors,
   NgxMatErrorDef,
+  NgxMatErrors,
   NgxMatErrorsForDateRangePicker,
 } from 'ngx-mat-errors';
+import { delay, of } from 'rxjs';
 import { AsyncMinLengthValidator } from './async-min-length-validator.directive';
-import { of, delay } from 'rxjs';
-import { MatToolbarModule } from '@angular/material/toolbar';
 
 @Component({
   selector: 'app-root',
@@ -34,7 +34,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  standalone: true,
   imports: [
     CommonModule,
     MatFormFieldModule,
