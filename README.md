@@ -224,8 +224,8 @@ When used with multiple controls, you can specify the control for which the erro
 
 ## Compatibility
 
-- `@angular/core`: `^18.0.0`
-- `@angular/material`: `^18.0.0`
+- `@angular/core: ^18.0.0 || ^19.0.0`
+- `@angular/material: ^18.0.0 || ^19.0.0`
 
 ### Reactive Forms
 
