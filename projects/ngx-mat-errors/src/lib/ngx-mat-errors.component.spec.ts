@@ -70,7 +70,6 @@ describe('NgxMatErrors', () => {
 
   describe('out of MatFormField', () => {
     @Component({
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports, NgIf],
       providers: [...defaultProviders],
@@ -88,7 +87,6 @@ describe('NgxMatErrors', () => {
     });
 
     @Component({
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports],
       providers: [...defaultProviders],
@@ -114,7 +112,6 @@ describe('NgxMatErrors', () => {
     });
 
     @Component({
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports, NgIf],
       providers: [...defaultProviders],
@@ -154,7 +151,6 @@ describe('NgxMatErrors', () => {
     });
 
     @Component({
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports, NgIf],
       providers: [...defaultProviders],
@@ -190,7 +186,6 @@ describe('NgxMatErrors', () => {
 
   describe('with multiple controls', () => {
     @Component({
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports],
       providers: [...defaultProviders],
@@ -237,7 +232,6 @@ describe('NgxMatErrors', () => {
 
   describe('without ngxMatErrorDef', () => {
     @Component({
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports],
       providers: [...defaultProviders],
@@ -294,7 +288,6 @@ describe('NgxMatErrors', () => {
 
   describe('with ngxMatErrorDef', () => {
     @Component({
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports],
       providers: [...defaultProviders],
@@ -351,7 +344,6 @@ describe('NgxMatErrors', () => {
     });
 
     @Component({
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports, NgIf],
       providers: [...defaultProviders],
@@ -412,7 +404,6 @@ describe('NgxMatErrors', () => {
 
   describe('with async validator', () => {
     @Component({
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports],
       providers: [...defaultProviders],
@@ -457,7 +448,6 @@ describe('NgxMatErrors', () => {
 
   describe('with observable messages', () => {
     @Component({
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports],
       providers: [
@@ -516,7 +506,6 @@ describe('NgxMatErrors', () => {
       }
     }
     @Component({
-      standalone: true,
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports, NgxMatErrorsForTest],
       providers: [...defaultProviders],
