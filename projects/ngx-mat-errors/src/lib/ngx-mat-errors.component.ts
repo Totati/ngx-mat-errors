@@ -20,7 +20,10 @@ import {
   switchMap,
   type Observable,
 } from 'rxjs';
-import { NgxMatErrorControl } from './ngx-mat-error-control';
+import {
+  NgxMatErrorControl,
+  provideDefaultNgxMatErrorControl,
+} from './ngx-mat-error-control';
 import {
   NGX_MAT_ERROR_DEF,
   type INgxMatErrorDef,
@@ -32,7 +35,7 @@ import type {
 } from './types';
 import { coerceToObservable } from './utils/coerce-to-observable';
 import { distinctUntilErrorChanged } from './utils/distinct-until-error-changed';
-import { findCustomErrorForControl as findErrorForControl } from './utils/find-error-for-control';
+import { findErrorForControl } from './utils/find-error-for-control';
 import { getAbstractControls } from './utils/get-abstract-controls';
 import { getControlWithError } from './utils/get-control-with-error';
 
@@ -56,12 +59,7 @@ export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<
   host: {
     class: 'ngx-mat-errors',
   },
-  providers: [
-    {
-      provide: NgxMatErrorControl,
-      useClass: NgxMatErrorControl,
-    },
-  ],
+  providers: [provideDefaultNgxMatErrorControl()],
 })
 export class NgxMatErrors implements OnDestroy {
   private readonly messages$ = coerceToObservable(

@@ -3,7 +3,8 @@ import { MAT_FORM_FIELD } from '@angular/material/form-field';
 import type { FormFieldControl } from './types';
 
 /**
- * This class contains the logic to get the control or controls of MatFormField.
+ * This class contains the logic of getting the default control of a MatFormField.
+ * Extend it to implement a custom getter method.
  */
 @Injectable()
 export class NgxMatErrorControl {
@@ -13,6 +14,9 @@ export class NgxMatErrorControl {
   }
 }
 
+/**
+ * Provides the default control accessor of a MatFormField.
+ */
 export function provideDefaultNgxMatErrorControl(): Provider {
   return {
     provide: NgxMatErrorControl,
