@@ -4,10 +4,9 @@ import { ErrorMessages } from '../types';
 
 /**
  * Finds the error key or custom error for a control.
- *
  * @returns INgxMatErrorDef | undefined
  */
-export function findCustomErrorForControl(
+export function findErrorForControl(
   control: AbstractControl,
   messages: ErrorMessages,
   customErrorMessages: readonly INgxMatErrorDef[]
