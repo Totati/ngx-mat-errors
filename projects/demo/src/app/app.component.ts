@@ -29,7 +29,7 @@ import { delay, of } from 'rxjs';
 import { AsyncMinLengthValidator } from './async-min-length-validator.directive';
 
 @Component({
-  selector: 'app-root',
+  selector: 'body',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
