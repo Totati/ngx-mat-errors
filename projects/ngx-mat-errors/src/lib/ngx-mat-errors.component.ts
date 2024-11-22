@@ -1,4 +1,4 @@
-import { AsyncPipe, NgIf, NgTemplateOutlet } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -46,15 +46,15 @@ export const NGX_MAT_ERROR_DEFAULT_OPTIONS = new InjectionToken<
 @Component({
   selector: 'ngx-mat-errors, [ngx-mat-errors]',
   template: `<ng-template #defaultTemplate let-error>{{ error }}</ng-template
-    ><ng-template [ngIf]="error$ | async" let-error
-      ><ng-template
-        [ngTemplateOutlet]="error.template ?? defaultTemplate"
-        [ngTemplateOutletContext]="error"
-      ></ng-template>
-    </ng-template>`,
+    >@if( error$ | async; as error) {
+    <ng-template
+      [ngTemplateOutlet]="error.template ?? defaultTemplate"
+      [ngTemplateOutletContext]="error"
+    ></ng-template>
+    }`,
   encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgIf, AsyncPipe, NgTemplateOutlet],
+  imports: [AsyncPipe, NgTemplateOutlet],
   host: {
     class: 'ngx-mat-errors',
   },
