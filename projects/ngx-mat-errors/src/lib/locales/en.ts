@@ -1,19 +1,20 @@
 import { formatDate } from '@angular/common';
 import { type FactoryProvider, LOCALE_ID } from '@angular/core';
 import type {
-  DatepickerParseError,
   EndDateError,
   ErrorMessages,
   LengthError,
   MaxError,
   MinError,
   StartDateError,
+  ParseError,
 } from '../types';
 import { NGX_MAT_ERROR_DEFAULT_OPTIONS } from '../ngx-mat-errors.component';
 
 export function errorMessagesEnFactory(
   locale: string,
-  format = 'shortDate'
+  dateFormat = 'shortDate',
+  timeFormat = 'shortTime'
 ): ErrorMessages {
   return {
     min: (error: MinError) =>
@@ -27,23 +28,36 @@ export function errorMessagesEnFactory(
     maxlength: (error: LengthError) =>
       `Please enter no more than ${error.requiredLength} characters.`,
     matDatepickerMin: (error: MinError<Date>) => {
-      const formatted = formatDate(error.min, format, locale);
+      const formatted = formatDate(error.min, dateFormat, locale);
       return `Please enter a date greater than or equal to ${
         formatted ?? error.min
       }.`;
     },
     matDatepickerMax: (error: MaxError<Date>) => {
-      const formatted = formatDate(error.max, format, locale);
+      const formatted = formatDate(error.max, dateFormat, locale);
       return `Please enter a date less than or equal to ${
         formatted ?? error.max
       }.`;
     },
-    matDatepickerParse: (error: DatepickerParseError) => `Invalid date format.`,
+    matDatepickerParse: (error: ParseError) => `Invalid date format.`,
     matStartDateInvalid: (error: StartDateError<Date>) =>
       `Start date cannot be after end date.`,
     matEndDateInvalid: (error: EndDateError<Date>) =>
       `End date cannot be before start date.`,
     matDatepickerFilter: 'This date is filtered out.',
+    matTimepickerParse: (error: ParseError) => `Invalid time format.`,
+    matTimepickerMin: (error: MinError<Date>) => {
+      const formatted = formatDate(error.min, timeFormat, locale);
+      return `Please enter a time greater than or equal to ${
+        formatted ?? error.min
+      }.`;
+    },
+    matTimepickerMax: (error: MaxError<Date>) => {
+      const formatted = formatDate(error.max, timeFormat, locale);
+      return `Please enter a time less than or equal to ${
+        formatted ?? error.max
+      }.`;
+    },
   };
 }
 

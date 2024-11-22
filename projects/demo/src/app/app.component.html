@@ -68,6 +68,13 @@
           <span *ngxMatErrorDef="let error; for: 'required'; withControl: 'end'">End date is required.</span>
         </mat-error>
       </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Timepicker</mat-label>
+        <input matInput [matTimepicker]="timepicker1" matTimepickerMin="8:30" matTimepickerMax="18:00" [formControl]="time" />
+        <mat-timepicker-toggle matIconSuffix [for]="timepicker1"></mat-timepicker-toggle>
+        <mat-timepicker #timepicker1></mat-timepicker>
+        <mat-error ngx-mat-errors> </mat-error>
+      </mat-form-field>
     </mat-card-content>
   </mat-card>
 
@@ -127,6 +134,13 @@
         <mat-error [ngx-mat-errors]="[startDateModel, endDateModel]">
           <span *ngxMatErrorDef="let error; for: 'required'; withControl: endDateModel">End date is required.</span>
         </mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Timepicker</mat-label>
+        <input matInput [matTimepicker]="timepicker2" matTimepickerMin="8:30" matTimepickerMax="18:00" [(ngModel)]="value6" />
+        <mat-timepicker-toggle matIconSuffix [for]="timepicker2"></mat-timepicker-toggle>
+        <mat-timepicker #timepicker2></mat-timepicker>
+        <mat-error ngx-mat-errors> </mat-error>
       </mat-form-field>
     </mat-card-content>
   </mat-card>
