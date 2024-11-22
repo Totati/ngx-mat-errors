@@ -3,7 +3,6 @@ import type { MatDateRangeInput } from '@angular/material/datepicker';
 import { NgxMatErrorControl } from './ngx-mat-error-control';
 
 @Directive({
-  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: '[ngx-mat-errors][forDateRangePicker]',
   standalone: true,
   host: {
