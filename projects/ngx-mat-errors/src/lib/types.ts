@@ -83,8 +83,12 @@ export interface EndDateError<D> {
 }
 
 /**
- * For errors: 'matDatepickerParse'
+ * For errors: 'matDatepickerParse', 'matTimepickerParse'
  */
-export interface DatepickerParseError {
+export interface ParseError {
   text: string;
 }
+/**
+ * @deprecated to be removed in version 20. Please use ParseError instead
+ */
+export type DatepickerParseError = ParseError;

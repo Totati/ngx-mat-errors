@@ -19,6 +19,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatTimepickerModule } from '@angular/material/timepicker';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import {
   NgxMatErrorDef,
@@ -48,6 +49,7 @@ import { AsyncMinLengthValidator } from './async-min-length-validator.directive'
     AsyncMinLengthValidator,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatTimepickerModule,
     NgxMatErrorsForDateRangePicker,
   ],
 })
@@ -65,6 +67,7 @@ export class AppComponent {
       (control) => of(Validators.minLength(3)(control)).pipe(delay(250)),
     ],
   });
+  readonly time = new FormControl<Date | null>(new Date('2024-11-22 12:30'));
 
   readonly dateRange = new FormGroup({
     start: new FormControl<Date | null>(null, [Validators.required]),
@@ -78,6 +81,7 @@ export class AppComponent {
   value3: string | null = null;
   value4: Date | null = null;
   value5: Date | null = null;
+  value6: Date | null = null;
 
   readonly outerErrorControl = new FormControl<string | null>(null);
   getControl(
