@@ -113,6 +113,28 @@ describe('NgxMatErrors', () => {
 
     @Component({
       changeDetection: ChangeDetectionStrategy.OnPush,
+      imports: [...defaultImports],
+      providers: [...defaultProviders],
+      template: `<mat-error [ngx-mat-errors]="control"></mat-error>`,
+    })
+    class NgxMatErrorWithControlSetError {
+      control = new FormControl('');
+    }
+
+    it('should update error message when setErrors is used', async () => {
+      const fixture = TestBed.createComponent(NgxMatErrorWithControlSetError);
+      fixture.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(fixture);
+      const matError = await loader.getHarness(MatErrorHarness);
+      fixture.componentInstance.control.setErrors({
+        required: true,
+      });
+
+      expect(await matError.getText()).toBe('required');
+    });
+
+    @Component({
+      changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports, NgIf],
       providers: [...defaultProviders],
       template: `

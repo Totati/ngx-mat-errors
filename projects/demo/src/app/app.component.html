@@ -25,6 +25,7 @@
           </span>
         </mat-error>
       </p>
+      <p>You can use the <code>setErrors</code> method of a control to set any error. <button type="button" mat-button (click)="setError()">Set errors</button></p>
       <mat-form-field appearance="outline">
         <mat-label>Input 1</mat-label>
         <input type="text" matInput [formControl]="control1" autocomplete="off" />
@@ -32,6 +33,7 @@
           <span *ngxMatErrorDef="let error; for: 'pattern'">
             Only digits are allowed, up to 2 digits. Error: {{ error | json }}
           </span>
+          <span *ngxMatErrorDef="let error; for: 'customError'">{{error}}</span>
         </mat-error>
         <mat-hint>Only digits are allowed, up to 2 digits.</mat-hint>
       </mat-form-field>
