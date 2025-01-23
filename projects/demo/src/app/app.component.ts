@@ -13,6 +13,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -42,6 +43,7 @@ import { AsyncMinLengthValidator } from './async-min-length-validator.directive'
     NgxMatErrors,
     NgxMatErrorDef,
     MatCardModule,
+    MatButtonModule,
     MatRadioModule,
     MatToolbarModule,
     ReactiveFormsModule,
@@ -96,5 +98,9 @@ export class AppComponent {
       default:
         return undefined;
     }
+  }
+
+  setError() {
+    this.control1.setErrors({ customError: 'setErrors validation message' });
   }
 }
