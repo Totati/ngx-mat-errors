@@ -3,7 +3,7 @@ import {
   ValueChangeEvent,
   type AbstractControl,
 } from '@angular/forms';
-import { combineLatest, filter, map, startWith, type Observable } from 'rxjs';
+import { combineLatest, filter, map, startWith, type Observable, defaultIfEmpty } from 'rxjs';
 
 export function getControlWithError(
   controls: AbstractControl[]
@@ -20,6 +20,7 @@ export function getControlWithError(
     )
   );
   return combineLatest(controlChanges).pipe(
-    map((control) => control.find((control) => !!control.errors))
+    map((control) => control.find((control) => !!control.errors)),
+    defaultIfEmpty(undefined)
   );
 }

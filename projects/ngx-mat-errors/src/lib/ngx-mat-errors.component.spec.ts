@@ -1,34 +1,28 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { NgIf } from '@angular/common';
+
 import {
-  AfterContentInit,
   ChangeDetectionStrategy,
   Component,
-  Directive,
   Input,
-  inject,
+  provideZonelessChangeDetection,
   type Provider,
 } from '@angular/core';
 import {
   ComponentFixture,
-  TestBed,
-  fakeAsync,
-  tick,
+  TestBed
 } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatErrorHarness } from '@angular/material/form-field/testing';
 import { MatInputModule } from '@angular/material/input';
 import { MatInputHarness } from '@angular/material/input/testing';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import {
   NGX_MAT_ERROR_DEFAULT_OPTIONS,
-  NgxMatErrors,
   NgxMatErrorsModule,
   type ErrorMessages,
 } from 'ngx-mat-errors';
-import { delay, from, interval, map, of, take, tap, zip } from 'rxjs';
+import { BehaviorSubject, delay, of, tap } from 'rxjs';
 import type { LengthError } from './types';
 
 const defaultProviders: Provider[] = [
@@ -64,14 +58,14 @@ describe('NgxMatErrors', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [NoopAnimationsModule],
+      providers: [provideZonelessChangeDetection()],
     });
   });
 
   describe('out of MatFormField', () => {
     @Component({
       changeDetection: ChangeDetectionStrategy.OnPush,
-      imports: [...defaultImports, NgIf],
+      imports: [...defaultImports],
       providers: [...defaultProviders],
       template: `<mat-error ngx-mat-errors></mat-error>`,
     })
@@ -79,7 +73,7 @@ describe('NgxMatErrors', () => {
 
     it('should not render anything when no control is connected', async () => {
       const fixture = TestBed.createComponent(NgxMatErrorWithoutControl);
-      fixture.detectChanges();
+      await fixture.whenStable();
       loader = TestbedHarnessEnvironment.loader(fixture);
 
       const matError = await loader.getHarness(MatErrorHarness);
@@ -104,7 +98,7 @@ describe('NgxMatErrors', () => {
 
     it('should render error control is connected manually', async () => {
       const fixture = TestBed.createComponent(NgxMatErrorWithoutDefWithControl);
-      fixture.detectChanges();
+      await fixture.whenStable();
       loader = TestbedHarnessEnvironment.loader(fixture);
 
       const matError = await loader.getHarness(MatErrorHarness);
@@ -123,7 +117,7 @@ describe('NgxMatErrors', () => {
 
     it('should update error message when setErrors is used', async () => {
       const fixture = TestBed.createComponent(NgxMatErrorWithControlSetError);
-      fixture.detectChanges();
+      await fixture.whenStable();
       loader = TestbedHarnessEnvironment.loader(fixture);
       const matError = await loader.getHarness(MatErrorHarness);
       fixture.componentInstance.control.setErrors({
@@ -135,7 +129,7 @@ describe('NgxMatErrors', () => {
 
     @Component({
       changeDetection: ChangeDetectionStrategy.OnPush,
-      imports: [...defaultImports, NgIf],
+      imports: [...defaultImports],
       providers: [...defaultProviders],
       template: `
         <mat-error
@@ -160,21 +154,21 @@ describe('NgxMatErrors', () => {
 
     it('should handle control change', async () => {
       const fixture = TestBed.createComponent(NgxMatErrorWithControlChange);
-      fixture.detectChanges();
+      await fixture.whenStable();
       loader = TestbedHarnessEnvironment.loader(fixture);
 
       const matError = await loader.getHarness(MatErrorHarness);
       expect(await matError.getText()).toBe('2 3');
 
       fixture.componentRef.setInput('isControlOneSelected', false);
-      fixture.detectChanges();
+      await fixture.whenStable();
 
       expect(await matError.getText()).toBe('email');
     });
 
     @Component({
       changeDetection: ChangeDetectionStrategy.OnPush,
-      imports: [...defaultImports, NgIf],
+      imports: [...defaultImports],
       providers: [...defaultProviders],
       template: `
         <mat-error
@@ -194,13 +188,13 @@ describe('NgxMatErrors', () => {
 
     it('should clear error when connected control is removed', async () => {
       const fixture = TestBed.createComponent(NgxMatErrorWithControlRemoved);
-      fixture.detectChanges();
+      await fixture.whenStable();
       loader = TestbedHarnessEnvironment.loader(fixture);
 
       const matError = await loader.getHarness(MatErrorHarness);
       expect(await matError.getText()).toBe('2 3');
       fixture.componentRef.setInput('isControlOneSelected', false);
-      fixture.detectChanges();
+      await fixture.whenStable();
 
       expect(await matError.getText()).toBe('');
     });
@@ -226,9 +220,8 @@ describe('NgxMatErrors', () => {
       fixture.detectChanges();
       loader = TestbedHarnessEnvironment.loader(fixture);
 
-      const [matError1, matError2] = await loader.getAllHarnesses(
-        MatErrorHarness
-      );
+      const [matError1, matError2] =
+        await loader.getAllHarnesses(MatErrorHarness);
       expect(await matError1.getText()).toBe('2 3');
       expect(await matError2.getText()).toBe('email');
 
@@ -270,9 +263,9 @@ describe('NgxMatErrors', () => {
     }
 
     let fixture: ComponentFixture<NgxMatErrorWithoutDef>;
-    beforeEach(() => {
+    beforeEach(async () => {
       fixture = TestBed.createComponent(NgxMatErrorWithoutDef);
-      fixture.detectChanges();
+      await fixture.whenStable();
       loader = TestbedHarnessEnvironment.loader(fixture);
     });
 
@@ -331,9 +324,9 @@ describe('NgxMatErrors', () => {
     }
 
     let fixture: ComponentFixture<NgxMatErrorsWithErrorDef>;
-    beforeEach(() => {
+    beforeEach(async () => {
       fixture = TestBed.createComponent(NgxMatErrorsWithErrorDef);
-      fixture.detectChanges();
+      await fixture.whenStable();
       loader = TestbedHarnessEnvironment.loader(fixture);
     });
     it('should not display error message initially', async () => {
@@ -367,23 +360,23 @@ describe('NgxMatErrors', () => {
 
     @Component({
       changeDetection: ChangeDetectionStrategy.OnPush,
-      imports: [...defaultImports, NgIf],
+      imports: [...defaultImports],
       providers: [...defaultProviders],
       template: `
         <mat-form-field>
           <mat-label>Label</mat-label>
           <input matInput [formControl]="control" />
           <mat-error ngx-mat-errors>
-            <ng-container *ngIf="isCustomMinLength1Visible">
+            @if (isCustomMinLength1Visible) {
               <span *ngxMatErrorDef="let error; for: 'minlength'"
                 >minLength 1</span
               >
-            </ng-container>
-            <ng-container *ngIf="isCustomMinLength2Visible">
+            }
+            @if (isCustomMinLength2Visible) {
               <span *ngxMatErrorDef="let error; for: 'minlength'"
                 >minLength 2</span
               >
-            </ng-container>
+            }
           </mat-error>
         </mat-form-field>
       `,
@@ -398,7 +391,7 @@ describe('NgxMatErrors', () => {
 
     it('should handle ngxMatErrorDef change', async () => {
       const fixture = TestBed.createComponent(NgxMatErrorsWithErrorDefChange);
-      fixture.detectChanges();
+      await fixture.whenStable();
       loader = TestbedHarnessEnvironment.loader(fixture);
 
       const matInput = await loader.getHarness(MatInputHarness);
@@ -443,107 +436,67 @@ describe('NgxMatErrors', () => {
           (control) =>
             of(Validators.minLength(3)(control)).pipe(
               delay(0),
-              tap(console.log)
             ),
         ],
       });
     }
 
-    it('should display errors of async validators', fakeAsync(async () => {
+    it('should display errors of async validators', async () => {
       const fixture = TestBed.createComponent(NgxMatErrorWithAsyncValidator);
-      fixture.detectChanges();
+      await fixture.whenStable();
       loader = TestbedHarnessEnvironment.loader(fixture);
       const matInput = await loader.getHarness(MatInputHarness);
       await matInput.blur();
       await matInput.setValue('a');
-      tick(1);
-      fixture.detectChanges();
+      await new Promise((r) => setTimeout(r, 1));
+      await fixture.whenStable();
       await fixture.whenRenderingDone();
       const matError = await loader.getHarness(MatErrorHarness);
       expect(await matError.getText()).toBe('1 3');
       await matInput.setValue('as');
-      tick(1);
-      fixture.detectChanges();
+      await new Promise((r) => setTimeout(r, 1));
+      await fixture.whenStable();
       expect(await matError.getText()).toBe('2 3');
-    }));
+    });
   });
 
   describe('with observable messages', () => {
     @Component({
       changeDetection: ChangeDetectionStrategy.OnPush,
       imports: [...defaultImports],
-      providers: [
-        {
-          provide: NGX_MAT_ERROR_DEFAULT_OPTIONS,
-          useValue: zip(
-            from([
-              {
-                minlength: 'minlength1',
-              },
-              {
-                minlength: 'minlength2',
-              },
-            ] as ErrorMessages[]),
-            interval(1)
-          ).pipe(
-            take(2),
-            map(([v]) => v)
-          ),
-        },
-      ],
       template: `<mat-error [ngx-mat-errors]="control"></mat-error>`,
     })
     class NgxMatErrorWithObservableMessages {
       control = createControl('12');
     }
 
-    it('should change message when new messages enter the stream', fakeAsync(async () => {
+    it('should change message when new messages enters the stream', async () => {
+      const messages = new BehaviorSubject<ErrorMessages>({});
+      TestBed.configureTestingModule({
+        providers: [
+          {
+            provide: NGX_MAT_ERROR_DEFAULT_OPTIONS,
+            useValue: messages,
+          },
+        ],
+      });
       const fixture = TestBed.createComponent(
-        NgxMatErrorWithObservableMessages
+        NgxMatErrorWithObservableMessages,
       );
-      fixture.detectChanges();
+      await fixture.whenStable();
       loader = TestbedHarnessEnvironment.loader(fixture);
       const matError = await loader.getHarness(MatErrorHarness);
       expect(await matError.getText()).toBe('');
-      tick(1);
+      messages.next({
+        minlength: 'minlength1',
+      });
+      await fixture.whenStable();
       expect(await matError.getText()).toBe('minlength1');
-      tick(1);
+      messages.next({
+        minlength: 'minlength2',
+      });
+      await fixture.whenStable();
       expect(await matError.getText()).toBe('minlength2');
-    }));
-  });
-
-  describe('with deprecated control change', () => {
-    @Directive({
-      // eslint-disable-next-line @angular-eslint/directive-selector
-      selector: '[ngx-mat-errors][forTest]',
-      standalone: true,
-    })
-    class NgxMatErrorsForTest implements AfterContentInit {
-      private readonly ngxMatErrors = inject(NgxMatErrors);
-      public ngAfterContentInit() {
-        // Remove this whole describe block when the deprecated API is removed.
-        this.ngxMatErrors.control = new FormControl(null, [
-          Validators.required,
-        ]);
-      }
-    }
-    @Component({
-      changeDetection: ChangeDetectionStrategy.OnPush,
-      imports: [...defaultImports, NgxMatErrorsForTest],
-      providers: [...defaultProviders],
-      template: `<mat-error ngx-mat-errors forTest></mat-error>`,
-    })
-    class NgxMatErrorWithDeprecatedControlSetting {}
-
-    it('should be possible to set the control manually through deprecated API', async () => {
-      const fixture = TestBed.createComponent(
-        NgxMatErrorWithDeprecatedControlSetting
-      );
-      fixture.detectChanges();
-      loader = TestbedHarnessEnvironment.loader(fixture);
-      const matError = await loader.getHarness(MatErrorHarness);
-
-      expect(await matError.getText()).toBe('required');
     });
   });
 });

@@ -4,11 +4,11 @@ import type { NgxMatErrorControls } from '../types';
 
 export function getAbstractControls(
   controls: NgxMatErrorControls
-): AbstractControl[] | undefined {
+): AbstractControl[] {
   if (!controls) {
-    return;
+    return [];
   }
-  const _controls = coerceArray(controls)
+  return coerceArray(controls)
     .map((control) =>
       !control
         ? undefined
@@ -19,5 +19,4 @@ export function getAbstractControls(
         : control.ngControl?.control
     )
     .filter(<T>(control: T): control is NonNullable<T> => control != null);
-  return _controls.length ? _controls : undefined;
 }

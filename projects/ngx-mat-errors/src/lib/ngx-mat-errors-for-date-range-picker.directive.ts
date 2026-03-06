@@ -18,6 +18,9 @@ import { NgxMatErrorControl } from './ngx-mat-error-control';
 export class NgxMatErrorsForDateRangePicker<D> extends NgxMatErrorControl {
   /** Returns start and end controls of the date range picker. */
   public override get() {
+    if (!this.matFormField?._control) {
+      return;
+    }
     const { _startInput, _endInput } = this.matFormField!
       ._control as MatDateRangeInput<D>;
     return [_startInput, _endInput];

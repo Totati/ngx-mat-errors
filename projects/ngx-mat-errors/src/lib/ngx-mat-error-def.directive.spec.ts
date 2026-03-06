@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  provideZonelessChangeDetection,
+  ViewChild,
+} from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import {
   FormControl,
@@ -9,6 +14,12 @@ import {
 import { NgxMatErrorDef } from './ngx-mat-error-def.directive';
 
 describe('NgxMatErrorDef', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [provideZonelessChangeDetection()],
+    });
+  });
+
   describe('withControl', () => {
     @Component({
       template: `<form [formGroup]="fg">
@@ -28,11 +39,11 @@ describe('NgxMatErrorDef', () => {
       });
     }
 
-    it('should get the control when withControl is string', () => {
+    it('should get the control when withControl is string', async () => {
       const fixture = TestBed.createComponent(
-        NgxMatErrorsWithErrorDefWithControlOfString
+        NgxMatErrorsWithErrorDefWithControlOfString,
       );
-      fixture.detectChanges();
+      await fixture.whenStable();
       const { fg, ngxMatErrorDef } = fixture.componentInstance;
       expect(fg.controls.input).toEqual(ngxMatErrorDef.control as FormControl);
     });
@@ -55,11 +66,11 @@ describe('NgxMatErrorDef', () => {
       public input = '';
     }
 
-    it('should get the control when withControl is NgModel', () => {
+    it('should get the control when withControl is NgModel', async () => {
       const fixture = TestBed.createComponent(
-        NgxMatErrorsWithErrorDefWithControlOfNgModel
+        NgxMatErrorsWithErrorDefWithControlOfNgModel,
       );
-      fixture.detectChanges();
+      await fixture.whenStable();
       expect(fixture.componentInstance.ngxMatErrorDef.control).toBeDefined();
     });
   });

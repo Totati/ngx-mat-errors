@@ -10,7 +10,7 @@ NgxMatErrors provides an easy yet flexible solution for displaying error message
 
 ## Try It
 
-See it in action on [StackBlitz](https://stackblitz.com/edit/ngx-mat-errors-angular-19?file=src%2Fapp%2Fapp.component.html).
+See it in action on [StackBlitz](https://stackblitz.com/edit/ngx-mat-errors-angular-20?file=src%2Fapp%2Fapp.component.html).
 
 ## How to Use It
 
@@ -20,35 +20,29 @@ Install `ngx-mat-errors` in your project:
 npm install ngx-mat-errors
 ```
 
-Import `NgxMatErrorsModule` and provide `NGX_MAT_ERROR_CONFIG_EN` (or your custom error messages) in your `app.module.ts`.
+Provide `NGX_MAT_ERROR_CONFIG_EN` (or your custom error messages) in your application.
 
 ```typescript
-import { NgxMatErrorsModule, NGX_MAT_ERROR_CONFIG_EN } from "ngx-mat-errors";
+import { NGX_MAT_ERROR_CONFIG_EN } from "ngx-mat-errors";
 
-@NgModule({
-  imports: [
-    ...,
-    NgxMatErrorsModule
-  ],
+bootstrapApplication(App, {
   providers: [NGX_MAT_ERROR_CONFIG_EN],
-})
-export class AppModule {}
+}).catch((err) => console.error(err));
 ```
 
-Or you can import only `NgxMatErrors` and `NgxMatErrorDef` as they are marked standalone.
+Import `NgxMatErrors` or `NgxMatErrorsModule` in your component.
 
 ```typescript
-import { NgxMatErrors, NgxMatErrorDef, NGX_MAT_ERROR_CONFIG_EN } from "ngx-mat-errors";
+import { NgxMatErrors } from "ngx-mat-errors";
 
-@NgModule({
+@Component({
+  ...,
   imports: [
     ...,
-    NgxMatErrors,
-    NgxMatErrorDef
+    NgxMatErrors
   ],
-  providers: [NGX_MAT_ERROR_CONFIG_EN],
 })
-export class AppModule {}
+export class App {}
 ```
 
 Add `[ngx-mat-errors]` to your `mat-error` in your `mat-form-field`.
@@ -63,7 +57,7 @@ Add `[ngx-mat-errors]` to your `mat-error` in your `mat-form-field`.
 
 ### Outside a `MatFormField` or Override the Control
 
-`ngx-mat-errors` can be used as an `@Input()` to assign a control manually.
+`ngx-mat-errors` can be used as an `input()` to assign a control manually.
 
 #### Reactive Forms
 
@@ -129,7 +123,7 @@ There are two ways to customize your error messages.
 
 ### Injection Token
 
-There is the `NGX_MAT_ERROR_DEFAULT_OPTIONS` injection token. You can provide it in your `app.module.ts` with `useClass` or `useFactory` and customize your error messages globally.
+There is the `NGX_MAT_ERROR_DEFAULT_OPTIONS` injection token. You can provide it with `useClass` or `useFactory` and customize your error messages globally.
 
 This example changes only the `min` error message.
 
@@ -150,21 +144,19 @@ export const NGX_MAT_ERROR_DEFAULT_CONFIG: FactoryProvider = {
   deps: [LOCALE_ID],
 };
 
-@NgModule({
-  ...
+bootstrapApplication(App, {
   providers: [NGX_MAT_ERROR_DEFAULT_CONFIG],
-})
-export class AppModule {}
+}).catch((err) => console.error(err));
 ```
 
-You can provide an `Observable<ErrorMessages>` too, which allows changes of error messages. This comes in handy when your app supports JIT localization with libraries like `@ngx-translate`.
+You can provide an `Observable<ErrorMessages>` or a `Signal<ErrorMessages>` too, which allows changes of error messages. This comes in handy when your app supports JIT localization with libraries like `@ngx-translate`.
 
 ```typescript
 import {
   NGX_MAT_ERROR_DEFAULT_OPTIONS
 } from 'ngx-mat-errors';
 import { FactoryProvider, LOCALE_ID } from '@angular/core';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, startWith, map } from 'rxjs';
 
 export const NGX_MAT_ERROR_DEFAULT_CONFIG: FactoryProvider = {
@@ -182,12 +174,6 @@ export const NGX_MAT_ERROR_DEFAULT_CONFIG: FactoryProvider = {
   provide: NGX_MAT_ERROR_DEFAULT_OPTIONS,
   deps: [LOCALE_ID, TranslateService],
 };
-
-@NgModule({
-  ...
-  providers: [NGX_MAT_ERROR_DEFAULT_CONFIG],
-})
-export class AppModule {}
 ```
 
 ### \*ngxMatErrorDef
@@ -224,8 +210,8 @@ When used with multiple controls, you can specify the control for which the erro
 
 ## Compatibility
 
-- `@angular/core: ^19.0.0 || ^20.0.0`
-- `@angular/material: ^19.0.0 || ^20.0.0`
+- `@angular/core: ^20.0.0 || ^21.0.0`
+- `@angular/material: ^20.0.0 || ^21.0.0`
 
 ### Reactive Forms
 
