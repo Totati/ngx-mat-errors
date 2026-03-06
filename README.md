@@ -10,7 +10,7 @@ NgxMatErrors provides an easy yet flexible solution for displaying error message
 
 ## Try It
 
-See it in action on [StackBlitz](https://stackblitz.com/edit/ngx-mat-errors-angular-20?file=src%2Fapp%2Fapp.component.html).
+See it in action on [StackBlitz](https://stackblitz.com/edit/ngx-mat-errors-angular-21?file=src%2Fapp%2Fapp.component.html).
 
 ## How to Use It
 
@@ -210,8 +210,8 @@ When used with multiple controls, you can specify the control for which the erro
 
 ## Compatibility
 
-- `@angular/core: ^20.0.0 || ^21.0.0`
-- `@angular/material: ^20.0.0 || ^21.0.0`
+- `@angular/core: ^21.0.0`
+- `@angular/material: ^21.0.0`
 
 ### Reactive Forms
 
