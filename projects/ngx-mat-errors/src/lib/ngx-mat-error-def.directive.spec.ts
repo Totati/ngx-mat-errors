@@ -1,9 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  provideZonelessChangeDetection,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import {
   FormControl,
@@ -14,12 +9,6 @@ import {
 import { NgxMatErrorDef } from './ngx-mat-error-def.directive';
 
 describe('NgxMatErrorDef', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()],
-    });
-  });
-
   describe('withControl', () => {
     @Component({
       template: `<form [formGroup]="fg">
