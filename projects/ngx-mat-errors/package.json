@@ -1,14 +1,14 @@
 {
   "name": "ngx-mat-errors",
-  "version": "20.0.0",
+  "version": "21.0.0",
   "author": {
     "name": "Totati",
     "url": "https://twitter.com/48Aca"
   },
   "peerDependencies": {
-    "@angular/common": "^20.0.0 || ^21.0.0",
-    "@angular/core": "^20.0.0 || ^21.0.0",
-    "@angular/material": "^20.0.0 || ^21.0.0"
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/material": "^21.0.0"
   },
   "license": "MIT",
   "repository": {
@@ -24,7 +24,7 @@
     "validation",
     "validator",
     "custom",
-    "MatFromField",
+    "MatFormField",
     "mat-form-field"
   ],
   "dependencies": {
