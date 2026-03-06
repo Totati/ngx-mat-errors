@@ -88,7 +88,3 @@ export interface EndDateError<D> {
 export interface ParseError {
   text: string;
 }
-/**
- * @deprecated to be removed in version 20. Please use ParseError instead
- */
-export type DatepickerParseError = ParseError;

@@ -1,4 +1,4 @@
-import { Injectable, type Provider, inject } from '@angular/core';
+import { Injectable, type Provider, afterNextRender, inject, signal } from '@angular/core';
 import { MAT_FORM_FIELD } from '@angular/material/form-field';
 import type { FormFieldControl } from './types';
 
@@ -9,8 +9,16 @@ import type { FormFieldControl } from './types';
 @Injectable()
 export class NgxMatErrorControl {
   protected readonly matFormField = inject(MAT_FORM_FIELD, { optional: true });
+
+  public readonly control = signal<FormFieldControl | FormFieldControl[] | undefined>(undefined, {});
   public get(): undefined | FormFieldControl | FormFieldControl[] {
     return this.matFormField?._control;
+  }
+
+  constructor() {
+    afterNextRender(() => {
+      this.control.set(this.get());
+    })
   }
 }
 

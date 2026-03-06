@@ -1,15 +1,16 @@
-import { enableProdMode } from '@angular/core';
+import {
+  provideBrowserGlobalErrorListeners,
+  provideZonelessChangeDetection,
+} from '@angular/core';
 import { bootstrapApplication } from '@angular/platform-browser';
 
-import { provideAnimations } from '@angular/platform-browser/animations';
-import { AppComponent } from './app/app.component';
-import { environment } from './environments/environment';
 import { NGX_MAT_ERROR_CONFIG_EN } from 'ngx-mat-errors';
-
-if (environment.production) {
-  enableProdMode();
-}
+import { AppComponent } from './app/app.component';
 
 bootstrapApplication(AppComponent, {
-  providers: [provideAnimations(), NGX_MAT_ERROR_CONFIG_EN],
+  providers: [
+    provideBrowserGlobalErrorListeners(),
+    provideZonelessChangeDetection(),
+    NGX_MAT_ERROR_CONFIG_EN,
+  ],
 }).catch((err) => console.error(err));

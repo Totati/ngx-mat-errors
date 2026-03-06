@@ -1,5 +1,9 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  provideZonelessChangeDetection,
+} from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -8,7 +12,6 @@ import { MatDateRangeInputHarness } from '@angular/material/datepicker/testing';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatErrorHarness } from '@angular/material/form-field/testing';
 import { MatInputModule } from '@angular/material/input';
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxMatErrorDef } from './ngx-mat-error-def.directive';
 import { NgxMatErrorsForDateRangePicker } from './ngx-mat-errors-for-date-range-picker.directive';
 import {
@@ -19,7 +22,7 @@ import {
 describe('NgxMatErrorsForDateRangePicker', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [NoopAnimationsModule],
+      providers: [provideZonelessChangeDetection()],
     });
   });
   @Component({
@@ -65,12 +68,12 @@ describe('NgxMatErrorsForDateRangePicker', () => {
   }
   it('should assign controls of the MatDateRangePicker to ngx-mat-errors', async () => {
     const fixture = TestBed.createComponent(
-      NgxMatErrorsForDateRangePickerComponent
+      NgxMatErrorsForDateRangePickerComponent,
     );
-    fixture.detectChanges();
+    await fixture.whenStable();
     const loader = TestbedHarnessEnvironment.loader(fixture);
     const matDateRangeInputHarness = await loader.getHarness(
-      MatDateRangeInputHarness
+      MatDateRangeInputHarness,
     );
     const startInput = await matDateRangeInputHarness.getStartInput();
     startInput.blur();
