@@ -15,7 +15,7 @@
   "dependencies": {
     "@angular/cdk": "^20.2.14",
     "@angular/common": "^20.3.17",
-    "@angular/compiler": "^20.3.17",
+    "@angular/compiler": "^20.3.18",
     "@angular/core": "^20.3.18",
     "@angular/forms": "^20.3.17",
     "@angular/material": "^20.2.14",
@@ -33,7 +33,7 @@
     "@angular-eslint/template-parser": "^20.7.0",
     "@angular/build": "^20.3.18",
     "@angular/cli": "^20.3.18",
-    "@angular/compiler-cli": "^20.3.17",
+    "@angular/compiler-cli": "^20.3.18",
     "@angular/language-service": "^20.3.17",
     "@types/jasmine": "~5.1.0",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
