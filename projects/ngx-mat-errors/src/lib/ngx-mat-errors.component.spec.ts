@@ -1,17 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-
 import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  provideZonelessChangeDetection,
   type Provider,
 } from '@angular/core';
-import {
-  ComponentFixture,
-  TestBed
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatErrorHarness } from '@angular/material/form-field/testing';
@@ -22,7 +17,7 @@ import {
   NgxMatErrorsModule,
   type ErrorMessages,
 } from 'ngx-mat-errors';
-import { BehaviorSubject, delay, of, tap } from 'rxjs';
+import { BehaviorSubject, delay, of } from 'rxjs';
 import type { LengthError } from './types';
 
 const defaultProviders: Provider[] = [
@@ -55,12 +50,6 @@ function updateControlValidators(control: FormControl) {
 
 describe('NgxMatErrors', () => {
   let loader: HarnessLoader;
-
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection()],
-    });
-  });
 
   describe('out of MatFormField', () => {
     @Component({
@@ -433,10 +422,7 @@ describe('NgxMatErrors', () => {
     class NgxMatErrorWithAsyncValidator {
       control = new FormControl<string>('', {
         asyncValidators: [
-          (control) =>
-            of(Validators.minLength(3)(control)).pipe(
-              delay(0),
-            ),
+          (control) => of(Validators.minLength(3)(control)).pipe(delay(0)),
         ],
       });
     }
