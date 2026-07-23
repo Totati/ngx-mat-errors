@@ -32,7 +32,7 @@
     "@angular-eslint/schematics": "^20.7.0",
     "@angular-eslint/template-parser": "^20.7.0",
     "@angular/build": "^22.0.1",
-    "@angular/cli": "^20.3.18",
+    "@angular/cli": "^21.0.4",
     "@angular/compiler-cli": "^22.0.1",
     "@angular/language-service": "^20.3.17",
     "@types/jasmine": "~5.1.0",
