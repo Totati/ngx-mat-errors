@@ -15,7 +15,7 @@ export function findErrorForControl(
   return (
     customErrorMessages.find((customErrorMessage) =>
       errorKeys.some((error) => {
-        if (error !== customErrorMessage.ngxMatErrorDefFor) {
+        if (error !== customErrorMessage.ngxMatErrorDefFor()) {
           return false;
         }
         return (
