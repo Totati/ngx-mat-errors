@@ -99,7 +99,7 @@ export class NgxMatErrors {
       if (typeof errorOrErrorDef === 'object') {
         return {
           template: errorOrErrorDef.template,
-          $implicit: errors[errorOrErrorDef.ngxMatErrorDefFor],
+          $implicit: errors[errorOrErrorDef.ngxMatErrorDefFor()],
         };
       }
       const message = messages[errorOrErrorDef];
