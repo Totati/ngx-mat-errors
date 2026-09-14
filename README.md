@@ -115,7 +115,7 @@ You can use the `[forDateRangePicker]` standalone directive to display errors fo
 </mat-form-field>
 ```
 
-You can easily create directives like this to display errors in a `MatFormField` with multiple controls, look fot the implementation of `NgxMatErrorsForDateRangePicker`.
+You can easily create directives like this to display errors in a `MatFormField` with multiple controls, look for the implementation of `NgxMatErrorsForDateRangePicker`.
 
 ## Customize
 
@@ -210,8 +210,8 @@ When used with multiple controls, you can specify the control for which the erro
 
 ## Compatibility
 
-- `@angular/core: ^21.0.0`
-- `@angular/material: ^21.0.0`
+- `@angular/core: ^21.0.0 || ^22.0.0`
+- `@angular/material: ^21.0.0 || ^22.0.0`
 
 ### Reactive Forms
 
